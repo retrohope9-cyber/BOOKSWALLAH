@@ -367,7 +367,7 @@
           <input type="url" id="up-cover" required>
         </div>
         
-        <!-- NEW UPLOAD SECTION: Link OR Direct File -->
+        <!-- UPLOAD SECTION: Link OR Direct File -->
         <div class="form-group">
           <label>File Upload (Link OR Local PDF)</label>
           <input type="url" id="up-file-url" placeholder="Drive/Direct Link (Optional)">
@@ -751,9 +751,17 @@
           fileUrl = fileUrl.replace('dl=0', 'dl=1');
         }
 
+        // NEW: Force Cloudinary to instantly download instead of crashing the iframe
+        if (fileUrl.includes('cloudinary.com')) {
+          fileUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+        }
+
         // Invisible download trigger
         const hiddenLink = document.createElement('a');
         hiddenLink.href = fileUrl;
+        
+        // target="_top" ensures it breaks out of the Blogger iframe security
+        hiddenLink.target = '_top'; 
         hiddenLink.setAttribute('download', selectedBookForDownload.title + '.pdf'); 
         
         document.body.appendChild(hiddenLink);
