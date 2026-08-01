@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Notes Hub Vault</title>
+  
+  <!-- Firebase Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <style>
+    /* ==============================
+       CORE RETRO STYLES
+       ============================== */
+    :root {
+      --bg-dark: #0a0b10;
+      --bg-card: #151722;
+      --bg-elevated: #1e2130;
+      
+      --neon-cyan: #00d2ff;
+      --neon-purple: #9b51e0;
+      
+      --box-red: #ff4757;
+      --box-blue: #00a8ff;
+      --box-orange: #ffa502;
+      --box-green: #2ed573;
+      
+      --text-main: #f1f2f6;
+      --text-muted: #747d8c;
+      --border: #2f3542;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    ::-webkit-scrollbar { display: none; } /* Hide scrollbar for mobile feel */
+
+    /* ==============================
+       HEADER & TOP NAV
+       ============================== */
+    header {
+      padding: 1.5rem 1.2rem 1rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .brand-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.2rem;
+    }
+
+    .greeting {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .greeting span {
+      color: var(--neon-cyan);
+      font-weight: 600;
+    }
+
+    .top-actions {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.2rem;
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    .icon-btn.portal { border-color: var(--neon-purple); color: var(--neon-purple); }
+
+    /* ==============================
+       VIEWS CONTAINER
+       ============================== */
+    .container {
+      padding: 0 1.2rem 2rem;
+      flex: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .view-section { display: none; animation: fadeIn 0.3s ease; }
+    .view-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ==============================
+       DASHBOARD
+       ============================== */
+    .dashboard-box {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .dashboard-box:active { transform: scale(0.98); }
+
+    .box-red { border: 1px solid var(--box-red); }
+    .box-blue { border: 1px solid var(--box-blue); text-align: center; }
+    .box-orange { border: 1px solid var(--box-orange); text-align: center; }
+
+    .box-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 0.8rem;
+    }
+    .box-red .box-title { color: var(--box-red); }
+    .box-blue .box-title { color: var(--box-blue); font-size: 1rem; margin: 0; padding: 0.5rem 0;}
+    .box-orange .box-title { color: var(--box-orange); font-size: 1rem; margin: 0; padding: 0.5rem 0; }
+
+    .broadcast-content { font-size: 0.9rem; line-height: 1.5; color: #dfe4ea; }
+
+    /* ==============================
+       PDF BANK / VAULT
+       ============================== */
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 1.5rem;
+    }
+    .back-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+    .page-title { font-size: 1.2rem; font-weight: 700; }
+
+    /* Search & Pills */
+    .search-wrapper { margin-bottom: 1rem; }
+    .search-input {
+      width: 100%; padding: 0.9rem 1.2rem; border-radius: 25px;
+      border: 1px solid var(--border); background: var(--bg-card);
+      color: white; outline: none; font-size: 0.95rem;
+    }
+    .search-input:focus { border-color: var(--neon-cyan); }
+
+    .pill-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
+    .pill {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-main); padding: 0.4rem 1.2rem;
+      border-radius: 20px; font-size: 0.85rem; white-space: nowrap; cursor: pointer;
+    }
+    .pill.active { background: white; color: black; border-color: white; font-weight: 600; }
+
+    /* Vertical List Cards */
+    .list-card {
+      background: white; 
+      border-radius: 16px; padding: 10px; display: flex;
+      align-items: center; gap: 15px; margin-bottom: 12px; color: #111;
+    }
+    .list-cover {
+      width: 55px; height: 75px; border-radius: 8px; object-fit: cover;
+      background: #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .list-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .list-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; line-height: 1.2; }
+    .list-subtitle { font-size: 0.75rem; color: #666; font-weight: 500; }
+    .list-action { padding: 0 10px; color: #aaa; font-size: 1.2rem; font-weight: bold; background: none; border: none; cursor: pointer; }
+    
+    /* Wanted Board Specifics */
+    .wanted-form input {
+      width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg-card); color: white; margin-bottom: 10px;
+    }
+    .req-card {
+      background: var(--bg-card); border-left: 4px solid var(--box-orange);
+      padding: 1rem; border-radius: 8px; margin-bottom: 10px;
+    }
+
+    /* ==============================
+       BUTTONS & MODALS
+       ============================== */
+    .btn-gradient {
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+      color: white; border: none; padding: 0.9rem; border-radius: 8px;
+      font-weight: 700; font-size: 1rem; width: 100%; cursor: pointer;
+    }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 1rem;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    
+    .modal {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 2rem 1.5rem; border-radius: 16px; width: 100%; max-width: 400px; position: relative;
+    }
+    .close-btn { 
+      position: absolute; top: 15px; right: 15px; background: none; border: none; 
+      color: var(--text-muted); font-size: 1.5rem; cursor: pointer;
+    }
+    .modal h2 { text-align: center; margin-bottom: 1.5rem; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
+    .form-group input { 
+      width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border); 
+      background: var(--bg-elevated); color: white; outline: none; 
+    }
+    .form-group input:focus { border-color: var(--neon-cyan); }
+    
+    .auth-toggle { text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); }
+    .auth-toggle span { color: var(--neon-cyan); cursor: pointer; font-weight: bold; }
+
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;}
+    .admin-card { background: var(--bg-elevated); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-title">NOTES HUB</div>
+    <div class="greeting">Welcome, <span id="user-display">Guest</span></div>
+    
+    <div class="top-actions">
+      <button class="icon-btn" onclick="openAuth()">👤</button>
+      <button class="icon-btn portal" onclick="openModal('portal-modal')">⚡</button>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <!-- DASHBOARD VIEW -->
+    <div id="view-dashboard" class="view-section active">
+      <div class="dashboard-box box-red" id="broadcast-box" style="display: none;">
+        <div class="box-title">ADMIN BROADCAST:</div>
+        <div class="broadcast-content" id="broadcast-text"></div>
+      </div>
+      <div class="dashboard-box box-blue" onclick="switchView('view-vault')">
+        <div class="box-title">🌐 BROWSE PDF BANK</div>
+      </div>
+      <div class="dashboard-box box-orange" onclick="switchView('view-wanted')">
+        <div class="box-title">🎯 WANTED BOARD</div>
+      </div>
+    </div>
+
+    <!-- VAULT VIEW (PDF BANK) -->
+    <div id="view-vault" class="view-section">
+      <div class="page-header">
+        <button class="back-btn" onclick="switchView('view-dashboard')">❮</button>
+        <div class="page-title">PDF Bank</div>
+      </div>
+      <div class="search-wrapper">
+        <input type="text" id="search-input" class="search-input" placeholder="🔍 Search notes, modules, PYQs..." oninput="filterBooks()">
+      </div>
+      <div class="pill-container" id="tag-container"></div>
+      <div id="book-list">
+        <div style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading secure vault...</div>
+      </div>
+    </div>
+
+    <!-- WANTED BOARD VIEW -->
+    <div id="view-wanted" class="view-section">
+      <div class="page-header">
+        <button class="back-btn" onclick="switchView('view-dashboard')">❮</button>
+        <div class="page-title">Wanted Board</div>
+      </div>
+      <form class="wanted-form" onsubmit="handleRequestSubmit(event)">
+        <input type="text" id="req-title-input" placeholder="Request a Book, Notes, or Module..." required>
+        <button type="submit" class="btn-gradient" style="margin-bottom: 2rem;">POST REQUEST</button>
+      </form>
+      <div id="request-list"></div>
+    </div>
+
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal('auth-modal')">&times;</button>
+      <h2 id="auth-title">IDENTIFY</h2>
+      
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>3-DIGIT ID</label>
+          <input type="number" id="login-id" placeholder="e.g. 777" required>
+        </div>
+        <div class="form-group">
+          <label>PASSWORD</label>
+          <input type="password" id="login-pass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-gradient">ENTER HUB</button>
+        <div class="auth-toggle">Need an ID? <span onclick="toggleAuthMode()">Create one</span></div>
+      </form>
+
+      <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
+        <div class="form-group">
+          <label>YOUR NAME</label>
+          <input type="text" id="reg-name" placeholder="Name" required>
+        </div>
+        <div class="form-group">
+          <label>CREATE PASSWORD</label>
+          <input type="password" id="reg-pass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-gradient">GENERATE ID</button>
+        <div class="auth-toggle">Have an ID? <span onclick="toggleAuthMode()">Login</span></div>
+      </form>
+      
+      <div id="logout-panel" style="display: none; text-align: center;">
+        <p style="margin-bottom: 1.5rem; color: var(--text-muted);">You are currently connected.</p>
+        <button class="btn-gradient" style="background: var(--box-red);" onclick="handleLogout()">LOGOUT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secret Portal Modal -->
+  <div class="modal-overlay" id="portal-modal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal('portal-modal')">&times;</button>
+      <h2 style="background: none; -webkit-text-fill-color: var(--box-red); color: var(--box-red);">TERMINAL</h2>
+      <div class="form-group">
+        <input type="password" id="portal-code" placeholder="Enter Access Code..." style="text-align: center; font-size: 1.2rem; letter-spacing: 2px;">
+      </div>
+      <button class="btn-gradient" onclick="verifyPortalCode()">EXECUTE</button>
+    </div>
+  </div>
+
+  <!-- Uploader Modal -->
+  <div class="modal-overlay" id="upload-modal">
+    <div class="modal" style="max-height: 90vh; overflow-y: auto;">
+      <button class="close-btn" onclick="closeModal('upload-modal')">&times;</button>
+      <h2>UPLOAD DATA</h2>
+      <form onsubmit="handleBookUpload(event)">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="up-title" required>
+        </div>
+        <div class="form-group">
+          <label>Subtitle / Details (e.g. PW • 2026)</label>
+          <input type="text" id="up-author" required>
+        </div>
+        <div class="form-group">
+          <label>Cover Image URL</label>
+          <input type="url" id="up-cover" required>
+        </div>
+        
+        <!-- NEW UPLOAD SECTION: Link OR Direct File -->
+        <div class="form-group">
+          <label>File Upload (Link OR Local PDF)</label>
+          <input type="url" id="up-file-url" placeholder="Drive/Direct Link (Optional)">
+          <div style="text-align: center; color: var(--text-muted); margin: 8px 0; font-size: 0.8rem; font-weight: bold;">--- OR ---</div>
+          <input type="file" id="up-file-local" accept=".pdf" style="background: var(--bg-elevated); padding: 0.6rem; color: white; width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+        </div>
+
+        <div class="form-group">
+          <label>Tags (Comma Separated)</label>
+          <input type="text" id="up-tags" placeholder="Physics, Module, NCERT" required>
+        </div>
+        <div class="form-group">
+          <label style="color: var(--neon-cyan);">Secret Unlock Code</label>
+          <input type="text" id="up-secret" required>
+        </div>
+        <button type="submit" class="btn-gradient">POST TO BANK</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div class="modal-overlay" id="admin-modal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal('admin-modal')">&times;</button>
+      <h2 style="background: none; -webkit-text-fill-color: var(--box-red); color: var(--box-red);">GOD MODE</h2>
+      <div class="form-group">
+        <label>Update Broadcast (Blank to remove)</label>
+        <input type="text" id="admin-announcement" placeholder="Enter message...">
+        <button class="btn-gradient" style="margin-top: 10px;" onclick="setAnnouncement()">PUSH BROADCAST</button>
+      </div>
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3 id="stat-users" style="color: var(--neon-cyan); font-size: 2rem;">0</h3>
+          <p style="font-size: 0.7rem; color: var(--text-muted);">USERS</p>
+        </div>
+        <div class="admin-card">
+          <h3 id="stat-books" style="color: var(--neon-purple); font-size: 2rem;">0</h3>
+          <p style="font-size: 0.7rem; color: var(--text-muted);">FILES</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Lock Modal -->
+  <div class="modal-overlay" id="download-modal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal('download-modal')">&times;</button>
+      <h2 style="background: none; -webkit-text-fill-color: var(--neon-cyan); color: var(--neon-cyan);">LOCKED</h2>
+      <p style="text-align: center; color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">
+        Enter code to download:<br><strong id="download-title" style="color: white; display:block; margin-top:5px;"></strong>
+      </p>
+      <div class="form-group">
+        <input type="text" id="download-code-input" placeholder="Enter Code..." style="text-align: center; font-size: 1.1rem;">
+      </div>
+      <button class="btn-gradient" onclick="verifyDownloadCode()">UNLOCK PDF</button>
+    </div>
+  </div>
+
+  <script>
+    /* ==============================
+       FIREBASE INIT
+       ============================== */
+    const firebaseConfig = {
+      apiKey: "AIzaSyC0qaz9KkHm7jTP4xhPNQydHmrh90PyGDY",
+      authDomain: "retrohopeai.firebaseapp.com",
+      databaseURL: "https://retrohopeai-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "retrohopeai",
+      storageBucket: "retrohopeai.firebasestorage.app",
+      messagingSenderId: "537267909835",
+      appId: "1:537267909835:web:50eb777d28f150e0edd74e",
+      measurementId: "G-18821G606Q"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    /* ==============================
+       GLOBAL VARS & LISTENERS
+       ============================== */
+    let currentUser = JSON.parse(localStorage.getItem('retro_user')) || null;
+    let allBooks = [];
+    let currentFilterTag = 'All';
+    let selectedBookForDownload = null;
+
+    window.onload = () => {
+      updateAuthUI();
+      
+      // Books Listener
+      db.ref('books').on('value', snap => {
+        allBooks = [];
+        snap.forEach(child => { allBooks.push({ id: child.key, ...child.val() }); });
+        extractAndRenderTags(allBooks);
+        filterBooks();
+        if(document.getElementById('stat-books')) document.getElementById('stat-books').innerText = allBooks.length;
+      });
+
+      // Requests Listener
+      db.ref('requests').on('value', snap => {
+        const reqList = document.getElementById('request-list');
+        reqList.innerHTML = '';
+        if(!snap.exists()) reqList.innerHTML = `<div style="color:var(--text-muted); text-align:center;">No pending requests.</div>`;
+        snap.forEach(child => {
+          const req = child.val();
+          reqList.innerHTML += `
+            <div class="req-card">
+              <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 5px;">${req.title}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">By ID: <span style="color:var(--box-orange);">${req.userId}</span> (${req.userName})</div>
+            </div>`;
+        });
+      });
+
+      // Broadcast Listener
+      db.ref('announcement').on('value', snap => {
+        const data = snap.val();
+        const box = document.getElementById('broadcast-box');
+        if(data && data.active && data.text.trim() !== '') {
+          document.getElementById('broadcast-text').innerHTML = data.text;
+          box.style.display = 'block';
+        } else {
+          box.style.display = 'none';
+        }
+      });
+
+      // Users Stat
+      db.ref('users').on('value', snap => {
+        if(document.getElementById('stat-users')) document.getElementById('stat-users').innerText = snap.numChildren();
+      });
+    };
+
+    /* ==============================
+       UI NAVIGATION
+       ============================== */
+    function switchView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    function openModal(id) { 
+      document.getElementById(id).classList.add('active'); 
+      if(id === 'portal-modal') document.getElementById('portal-code').value = '';
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    /* ==============================
+       AUTHENTICATION
+       ============================== */
+    function openAuth() {
+      if(currentUser) {
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('register-form').style.display = 'none';
+        document.getElementById('logout-panel').style.display = 'block';
+        document.getElementById('auth-title').innerText = "PROFILE";
+      } else {
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('register-form').style.display = 'none';
+        document.getElementById('logout-panel').style.display = 'none';
+        document.getElementById('auth-title').innerText = "IDENTIFY";
+      }
+      openModal('auth-modal');
+    }
+
+    function toggleAuthMode() {
+      const login = document.getElementById('login-form');
+      const reg = document.getElementById('register-form');
+      if (login.style.display === 'none') { login.style.display = 'block'; reg.style.display = 'none'; } 
+      else { login.style.display = 'none'; reg.style.display = 'block'; }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const pass = document.getElementById('reg-pass').value.trim();
+      let newId, exists = true;
+      while(exists) {
+        newId = Math.floor(100 + Math.random() * 900);
+        const snap = await db.ref('users/' + newId).once('value');
+        exists = snap.exists();
+      }
+      await db.ref('users/' + newId).set({ name: name, password: pass });
+      alert(`✅ SUCCESS! \n\nYOUR ID IS: ${newId}\nMemorize this and Login.`);
+      document.getElementById('register-form').reset();
+      toggleAuthMode();
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById('login-id').value;
+      const pass = document.getElementById('login-pass').value;
+      const snap = await db.ref('users/' + id).once('value');
+      if (snap.exists() && snap.val().password === pass) {
+        currentUser = { id: id, ...snap.val() };
+        localStorage.setItem('retro_user', JSON.stringify(currentUser));
+        updateAuthUI();
+        closeModal('auth-modal');
+        document.getElementById('login-form').reset();
+      } else { alert("❌ Invalid ID or Password!"); }
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('retro_user');
+      updateAuthUI();
+      closeModal('auth-modal');
+    }
+
+    function updateAuthUI() {
+      document.getElementById('user-display').innerText = currentUser ? currentUser.name : "Guest";
+    }
+
+    /* ==============================
+       PORTALS (Admin / Upload)
+       ============================== */
+    function verifyPortalCode() {
+      const code = document.getElementById('portal-code').value.trim();
+      closeModal('portal-modal');
+      if (code === 'RETROAYUSH') openModal('upload-modal');
+      else if (code === 'RETRO2026') openModal('admin-modal');
+      else alert("❌ Invalid Terminal Code.");
+    }
+
+    function setAnnouncement() {
+      const text = document.getElementById('admin-announcement').value.trim();
+      db.ref('announcement').set({ text: text, active: text !== '' });
+      alert("📡 Broadcast Pushed!");
+      document.getElementById('admin-announcement').value = '';
+    }
+
+    // --- UPLOADER WITH CLOUDINARY INTEGRATION ---
+    async function handleBookUpload(e) {
+      e.preventDefault();
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.innerText = "UPLOADING... PLEASE WAIT";
+      submitBtn.disabled = true;
+
+      try {
+        let finalFileLink = document.getElementById('up-file-url').value.trim();
+        const localFile = document.getElementById('up-file-local').files[0];
+
+        // --- CLOUDINARY CONFIGURATION ---
+        const cloudName = "tgluknrf"; 
+        const uploadPreset = "RetroS"; 
+        
+        // If a file is selected from the phone, upload it directly to Cloudinary
+        if (localFile) {
+          const formData = new FormData();
+          formData.append("file", localFile);
+          formData.append("upload_preset", uploadPreset);
+
+          const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
+
+          const response = await fetch(cloudinaryUrl, {
+            method: "POST",
+            body: formData
+          });
+
+          const data = await response.json();
+          
+          if (data.secure_url) {
+            finalFileLink = data.secure_url;
+          } else {
+            throw new Error("Cloudinary rejected the file.");
+          }
+        }
+
+        if (!finalFileLink) {
+          alert("❌ Please provide either a web link or select a PDF file!");
+          submitBtn.innerText = "POST TO BANK";
+          submitBtn.disabled = false;
+          return;
+        }
+
+        // Save book details to Firebase Database
+        const newBook = {
+          title: document.getElementById('up-title').value.trim(),
+          author: document.getElementById('up-author').value.trim(),
+          cover: document.getElementById('up-cover').value.trim(),
+          fileLink: finalFileLink,
+          tags: document.getElementById('up-tags').value.trim(),
+          secretCode: document.getElementById('up-secret').value.trim(),
+          timestamp: Date.now()
+        };
+        
+        await db.ref('books').push(newBook);
+        alert("✅ Successfully Uploaded to PDF Bank!");
+        e.target.reset(); 
+        closeModal('upload-modal');
+
+      } catch (error) {
+        alert("❌ Upload Failed: " + error.message);
+      } finally {
+        submitBtn.innerText = "POST TO BANK";
+        submitBtn.disabled = false;
+      }
+    }
+
+    /* ==============================
+       RENDERING & FILTERING
+       ============================== */
+    function extractAndRenderTags(books) {
+      const tags = new Set(['All']);
+      books.forEach(b => {
+        if(b.tags) b.tags.split(',').forEach(t => { if(t.trim()) tags.add(t.trim()); });
+      });
+      const container = document.getElementById('tag-container');
+      container.innerHTML = '';
+      tags.forEach(tag => {
+        const isActive = tag === currentFilterTag ? 'active' : '';
+        container.innerHTML += `<button class="pill ${isActive}" onclick="setTagFilter('${tag}')">${tag}</button>`;
+      });
+    }
+
+    function setTagFilter(tag) {
+      currentFilterTag = tag;
+      extractAndRenderTags(allBooks);
+      filterBooks();
+    }
+
+    function filterBooks() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const list = document.getElementById('book-list');
+      list.innerHTML = '';
+      
+      const filtered = allBooks.filter(b => {
+        const matchesSearch = b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
+        const matchesTag = currentFilterTag === 'All' || (b.tags && b.tags.includes(currentFilterTag));
+        return matchesSearch && matchesTag;
+      });
+
+      if(filtered.length === 0) {
+        list.innerHTML = `<div style="text-align:center; color:#747d8c; padding:2rem;">No files found.</div>`;
+        return;
+      }
+
+      filtered.forEach(book => {
+        list.innerHTML += `
+          <div class="list-card" onclick="initiateDownload('${book.id}')">
+            <img src="${book.cover}" class="list-cover" onerror="this.src='https://via.placeholder.com/55x75?text=PDF'">
+            <div class="list-info">
+              <div class="list-title">${book.title}</div>
+              <div class="list-subtitle">${book.author}</div>
+            </div>
+            <button class="list-action">❯</button>
+          </div>
+        `;
+      });
+    }
+
+    /* ==============================
+       DOWNLOAD LOGIC (Silent / Background)
+       ============================== */
+    function initiateDownload(bookId) {
+      if (!currentUser) {
+        alert("❌ Guests cannot download files. Please create an ID or Login first.");
+        openAuth();
+        return;
+      }
+      selectedBookForDownload = allBooks.find(b => b.id === bookId);
+      if(selectedBookForDownload) {
+        document.getElementById('download-title').innerText = selectedBookForDownload.title;
+        document.getElementById('download-code-input').value = '';
+        openModal('download-modal');
+      }
+    }
+
+    function verifyDownloadCode() {
+      const input = document.getElementById('download-code-input').value.trim();
+      
+      if(input === selectedBookForDownload.secretCode || input === 'RETRO2026') {
+        let fileUrl = selectedBookForDownload.fileLink;
+        
+        // Convert Google Drive view links to direct downloads
+        const driveRegex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
+        const driveMatch = fileUrl.match(driveRegex);
+        if (driveMatch) {
+          fileUrl = `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
+        }
+        
+        // Convert Dropbox links to direct downloads
+        if (fileUrl.includes('dropbox.com') && fileUrl.includes('dl=0')) {
+          fileUrl = fileUrl.replace('dl=0', 'dl=1');
+        }
+
+        // Invisible download trigger
+        const hiddenLink = document.createElement('a');
+        hiddenLink.href = fileUrl;
+        hiddenLink.setAttribute('download', selectedBookForDownload.title + '.pdf'); 
+        
+        document.body.appendChild(hiddenLink);
+        hiddenLink.click();
+        document.body.removeChild(hiddenLink);
+
+        closeModal('download-modal');
+        document.getElementById('download-code-input').value = ''; 
+        
+      } else { 
+        alert("❌ Incorrect Unlock Code."); 
+      }
+    }
+
+    /* ==============================
+       WANTED BOARD POST
+       ============================== */
+    function handleRequestSubmit(e) {
+      e.preventDefault();
+      if(!currentUser) {
+        alert("❌ Login required to post a request."); openAuth(); return;
+      }
+      db.ref('requests').push({
+        title: document.getElementById('req-title-input').value.trim(),
+        userId: currentUser.id, userName: currentUser.name, timestamp: Date.now()
+      }).then(() => {
+        alert("✅ Posted to Wanted Board!"); document.getElementById('req-title-input').value = '';
+      });
+    }
+  </script>
+</body>
+</html>
