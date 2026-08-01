@@ -733,43 +733,55 @@
       }
     }
 
-    function verifyDownloadCode() {
+    async function verifyDownloadCode() {
       const input = document.getElementById('download-code-input').value.trim();
+      const btn = document.querySelector('#download-modal .btn-gradient');
       
       if(input === selectedBookForDownload.secretCode || input === 'RETRO2026') {
         let fileUrl = selectedBookForDownload.fileLink;
         
-        // Convert Google Drive view links to direct downloads
-        const driveRegex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
-        const driveMatch = fileUrl.match(driveRegex);
-        if (driveMatch) {
-          fileUrl = `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
-        }
-        
-        // Convert Dropbox links to direct downloads
-        if (fileUrl.includes('dropbox.com') && fileUrl.includes('dl=0')) {
-          fileUrl = fileUrl.replace('dl=0', 'dl=1');
-        }
+        // Show visual feedback so the user knows it's working
+        btn.innerText = "DOWNLOADING... PLEASE WAIT";
+        btn.disabled = true;
 
-        // NEW: Force Cloudinary to instantly download instead of crashing the iframe
-        if (fileUrl.includes('cloudinary.com')) {
-          fileUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+        try {
+          // Convert Google Drive view links to direct downloads
+          const driveRegex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
+          const driveMatch = fileUrl.match(driveRegex);
+          if (driveMatch) {
+            fileUrl = `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
+          }
+          
+          // Convert Dropbox links to direct downloads
+          if (fileUrl.includes('dropbox.com') && fileUrl.includes('dl=0')) {
+            fileUrl = fileUrl.replace('dl=0', 'dl=1');
+          }
+
+          // THE ULTIMATE FIX: Fetch the file silently as a background Blob
+          const response = await fetch(fileUrl);
+          const blob = await response.blob();
+          const localUrl = window.URL.createObjectURL(blob);
+
+          const hiddenLink = document.createElement('a');
+          hiddenLink.href = localUrl;
+          hiddenLink.download = selectedBookForDownload.title + '.pdf'; 
+          
+          document.body.appendChild(hiddenLink);
+          hiddenLink.click();
+          document.body.removeChild(hiddenLink);
+          window.URL.revokeObjectURL(localUrl);
+
+          closeModal('download-modal');
+          document.getElementById('download-code-input').value = ''; 
+          
+        } catch (error) {
+          // Fallback bypass just in case of strict browser settings
+          window.open(fileUrl, '_top');
+        } finally {
+          // Reset button
+          btn.innerText = "UNLOCK PDF";
+          btn.disabled = false;
         }
-
-        // Invisible download trigger
-        const hiddenLink = document.createElement('a');
-        hiddenLink.href = fileUrl;
-        
-        // target="_top" ensures it breaks out of the Blogger iframe security
-        hiddenLink.target = '_top'; 
-        hiddenLink.setAttribute('download', selectedBookForDownload.title + '.pdf'); 
-        
-        document.body.appendChild(hiddenLink);
-        hiddenLink.click();
-        document.body.removeChild(hiddenLink);
-
-        closeModal('download-modal');
-        document.getElementById('download-code-input').value = ''; 
         
       } else { 
         alert("❌ Incorrect Unlock Code."); 
