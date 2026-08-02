@@ -182,12 +182,24 @@
     .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .page-dots { color: var(--text-muted); font-weight: bold; padding: 0 4px; }
     
-    /* PDF Reader */
-    #view-reader { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-dark); z-index: 500; flex-direction: column; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    #reader-frame { flex: 1; width: 100%; border: none; background: white; }
+    /* =========================================
+       6. FULL HEIGHT PDF READER
+       ========================================= */
+    #view-reader { 
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+      background: var(--bg-dark); z-index: 500; flex-direction: column; 
+      animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    }
+    #pdf-iframe { 
+      width: 100%; 
+      height: calc(100vh - 65px); 
+      border: none; 
+      background: white; 
+      display: block; 
+    }
 
     /* =========================================
-       6. FORMS, MODALS & BUTTONS
+       7. FORMS, MODALS & BUTTONS
        ========================================= */
     .btn-gradient { 
       background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); color: white; 
@@ -199,11 +211,12 @@
     select.form-input { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elevated); color: white; outline: none; margin-bottom: 10px; font-size: 0.9rem; transition: border-color 0.3s; }
     select.form-input:focus { border-color: var(--neon-cyan); }
     
+    /* Z-INDEX FIX: Raised to 9999 so it covers everything, even the PDF reader! */
     .modal-overlay { 
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
       background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); 
       display: flex; justify-content: center; align-items: center; 
-      z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 1rem; 
+      z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 1rem; 
     }
     .modal-overlay.active { opacity: 1; pointer-events: all; }
     .modal-overlay.active .modal { animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
@@ -221,7 +234,6 @@
     }
     .form-group input:focus, .form-group textarea:focus { border-color: var(--neon-cyan); box-shadow: 0 0 8px rgba(0,210,255,0.1); }
     
-    /* UPDATED AUTH TOGGLE UI (MORE OBVIOUS BUTTON) */
     .auth-toggle { 
       text-align: center; margin-top: 1.2rem; font-size: 0.9rem; color: var(--text-muted); 
       background: rgba(255, 255, 255, 0.03); padding: 12px; border-radius: 8px; border: 1px dashed var(--border);
@@ -234,7 +246,7 @@
     .auth-toggle span:hover { background: var(--neon-cyan); color: #000; border-color: var(--neon-cyan); transform: scale(1.05); }
 
     /* =========================================
-       7. ADMIN COMMAND CENTER UI
+       8. ADMIN COMMAND CENTER UI
        ========================================= */
     .cmd-box { background: var(--bg-card); border-radius: 16px; padding: 1.2rem; margin-bottom: 1.5rem; border: 1.5px solid; position: relative; }
     .cmd-box.border-red { border-color: var(--box-red); }
@@ -260,7 +272,6 @@
     .admin-list-item { background: var(--bg-elevated); padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border: 1px solid var(--border); font-size: 0.9rem;}
     .admin-del-btn { background: var(--box-red); color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 0.7rem; cursor: pointer; font-weight: bold;}
 
-    /* Admin User Cards - Cleaned up to just MSG and NUKE */
     .usr-card { background: var(--bg-card); border: 1.5px solid var(--box-red); border-radius: 16px; padding: 1rem; margin-bottom: 1rem; position: relative; transition: all 0.3s; }
     .usr-card:hover { box-shadow: 0 4px 12px rgba(255, 71, 87, 0.15); }
     .usr-name { color: var(--box-red); font-size: 1.2rem; font-weight: bold; margin-bottom: 2px; }
@@ -280,7 +291,6 @@
     .u-btn.cyan { background: var(--neon-cyan); color: #000; }
     .u-btn.red { background: var(--box-red); }
 
-    /* Inbox */
     .msg-card { background: var(--bg-elevated); border-left: 4px solid var(--box-blue); padding: 1rem; border-radius: 8px; margin-bottom: 10px; }
     .msg-time { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px; }
     .msg-text { font-size: 0.95rem; line-height: 1.4; }
@@ -387,14 +397,32 @@
     </div>
   </div>
 
-  <!-- PDF READER -->
+  <!-- PDF READER OVERLAY -->
   <div id="view-reader">
-    <div class="page-header" style="padding: 1rem 1.2rem; background: var(--bg-card); border-bottom: 1px solid var(--border); margin: 0;">
+    <div class="page-header" style="padding: 1rem 1.2rem; background: var(--bg-card); border-bottom: 1px solid var(--border); margin: 0; min-height: 65px;">
         <button class="back-btn" onclick="closeReader()" style="margin-right: 15px;">❮</button>
         <div class="page-title" id="reader-title" style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem; color: white;">Book Title</div>
-        <button class="btn-gradient" id="reader-dl-btn" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem; background: var(--box-blue);">Download</button>
+        <button class="btn-gradient" onclick="openDownloadChoices()" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem; background: var(--box-blue);">Download</button>
     </div>
     <iframe id="pdf-iframe" src=""></iframe>
+  </div>
+
+  <!-- DUAL DOWNLOAD OPTIONS MODAL -->
+  <div class="modal-overlay" id="dl-choice-modal">
+    <div class="modal" style="text-align: center; padding: 2.5rem 1.5rem;">
+      <button class="close-btn" onclick="closeModal('dl-choice-modal')">&times;</button>
+      <h2 style="margin-bottom: 1.5rem; color: var(--neon-cyan); background: none; -webkit-text-fill-color: var(--neon-cyan);">SAVE BOOK</h2>
+      
+      <button class="btn-gradient smooth-transition" style="margin-bottom: 15px; font-size: 1.05rem;" onclick="downloadViaChrome()">
+        ⬇️ Download in Chrome
+      </button>
+      
+      <div style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.8rem; font-weight: bold;">-- OR --</div>
+      
+      <button class="btn-gradient smooth-transition" style="background: var(--box-green); font-size: 1.05rem;" onclick="downloadViaDrive()">
+        ☁️ Save to Google Drive
+      </button>
+    </div>
   </div>
 
   <!-- MODALS -->
@@ -415,7 +443,6 @@
         <div class="form-group"><label>YOUR 3-DIGIT CODE</label><input type="number" id="login-id" placeholder="e.g. 777" required></div>
         <div class="form-group"><label>PASSWORD</label><input type="password" id="login-pass" placeholder="••••••••" required></div>
         <button type="submit" class="btn-gradient">ENTER HUB</button>
-        <!-- UPDATED OBVIOUS TOGGLE BUTTON -->
         <div class="auth-toggle">Need an ID? <span onclick="toggleAuthMode()">CREATE NEW ID</span></div>
       </form>
 
@@ -424,7 +451,6 @@
         <div class="form-group"><label>CHOOSE YOUR OWN 3-DIGIT CODE</label><input type="number" id="reg-id" placeholder="e.g. 123" min="100" max="999" required></div>
         <div class="form-group"><label>CREATE PASSWORD</label><input type="password" id="reg-pass" placeholder="••••••••" required></div>
         <button type="submit" class="btn-gradient">REGISTER ID</button>
-        <!-- UPDATED OBVIOUS TOGGLE BUTTON -->
         <div class="auth-toggle">Have an ID? <span onclick="toggleAuthMode()">LOGIN NOW</span></div>
       </form>
       <div id="logout-panel" style="display: none; text-align: center;">
@@ -610,7 +636,6 @@
       updateAuthUI(); 
       loadData(); 
       pingOnlineStatus();
-      // UPDATED: Now pings the server every 15 seconds
       setInterval(pingOnlineStatus, 15000); 
     };
 
@@ -813,6 +838,7 @@
         openModal('auth-modal'); 
     }
     function toggleAuthMode() { const login = document.getElementById('login-form'); const reg = document.getElementById('register-form'); if (login.style.display === 'none') { login.style.display = 'block'; reg.style.display = 'none'; } else { login.style.display = 'none'; reg.style.display = 'block'; } }
+    
     async function handleRegister(e) {
       e.preventDefault(); const name = document.getElementById('reg-name').value.trim(); const customId = document.getElementById('reg-id').value.trim(); const pass = document.getElementById('reg-pass').value.trim();
       if(!customId || customId.length < 1 || customId.length > 4) { alert("❌ Invalid 3-digit code!"); return; }
@@ -822,6 +848,7 @@
           alert(`✅ SUCCESS! Your Custom ID: ${customId}`); document.getElementById('register-form').reset(); toggleAuthMode(); 
       } catch (error) { alert("❌ Registration Failed: " + error.message); }
     }
+    
     async function handleLogin(e) {
       e.preventDefault(); const id = document.getElementById('login-id').value.trim(); const pass = document.getElementById('login-pass').value;
       try { 
@@ -832,6 +859,7 @@
           } else { alert("❌ Invalid ID or Password!"); } 
       } catch (error) { alert("❌ Login Failed: " + error.message); }
     }
+    
     function handleLogout() { currentUser = null; localStorage.removeItem('retro_user'); isAdmin = false; updateAuthUI(); closeModal('auth-modal'); }
     function updateAuthUI() { document.getElementById('user-display').innerText = currentUser ? currentUser.name : "Guest"; }
 
@@ -848,25 +876,70 @@
     function openInbox() { document.getElementById('inbox-badge').style.display = 'none'; openModal('inbox-modal'); }
 
     // =========================================
-    // 6. READER, UPLOAD & FULL EDIT LOGIC
+    // 6. READER & DUAL DOWNLOAD LOGIC
     // =========================================
     function initiateRead(bookId) { 
         if (!currentUser) { alert("❌ Guests cannot view files. Please Login."); openAuth(); return; } 
         selectedBookForDownload = allBooks.find(b => b.id === bookId); 
-        if(selectedBookForDownload) { document.getElementById('download-title').innerText = selectedBookForDownload.title; document.getElementById('download-code-input').value = ''; openModal('download-modal'); } 
+        if(selectedBookForDownload) { 
+            document.getElementById('download-title').innerText = selectedBookForDownload.title; 
+            document.getElementById('download-code-input').value = ''; 
+            openModal('download-modal'); 
+        } 
     }
+
     function verifyDownloadCode() { 
         const input = document.getElementById('download-code-input').value.trim(); 
         if(input === selectedBookForDownload.secretCode || input === 'RETRO2026') { 
-            let fileUrl = selectedBookForDownload.fileLink; let viewerUrl = ''; 
-            if (fileUrl.includes('drive.google.com')) { const match = fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)/); if (match) viewerUrl = `https://drive.google.com/file/d/${match[1]}/preview`; else viewerUrl = fileUrl; } else { viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`; } 
-            document.getElementById('pdf-iframe').src = viewerUrl; document.getElementById('reader-title').innerText = selectedBookForDownload.title; document.getElementById('reader-dl-btn').onclick = () => { forceDownload(fileUrl, selectedBookForDownload.title); }; 
-            closeModal('download-modal'); document.getElementById('view-reader').style.display = 'flex'; 
+            let fileUrl = selectedBookForDownload.fileLink; 
+            let viewerUrl = ''; 
+            
+            if (fileUrl.includes('drive.google.com')) { 
+                const match = fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)/); 
+                if (match) viewerUrl = `https://drive.google.com/file/d/${match[1]}/preview`; 
+                else viewerUrl = fileUrl; 
+            } else { 
+                viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`; 
+            } 
+            
+            document.getElementById('pdf-iframe').src = viewerUrl; 
+            document.getElementById('reader-title').innerText = selectedBookForDownload.title; 
+            
+            closeModal('download-modal'); 
+            document.getElementById('view-reader').style.display = 'flex'; 
         } else { alert("❌ Incorrect Unlock Code."); } 
     }
-    function closeReader() { document.getElementById('view-reader').style.display = 'none'; document.getElementById('pdf-iframe').src = ""; }
-    function forceDownload(url, title) { const hiddenLink = document.createElement('a'); hiddenLink.href = url; hiddenLink.download = title + '.pdf'; hiddenLink.target = '_blank'; document.body.appendChild(hiddenLink); hiddenLink.click(); document.body.removeChild(hiddenLink); }
 
+    function closeReader() { document.getElementById('view-reader').style.display = 'none'; document.getElementById('pdf-iframe').src = ""; }
+    
+    function openDownloadChoices() {
+        openModal('dl-choice-modal');
+    }
+
+    function downloadViaChrome() {
+        if(!selectedBookForDownload) return;
+        let url = selectedBookForDownload.fileLink;
+        
+        if (url.includes('drive.google.com')) {
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (match) {
+                url = `https://drive.google.com/uc?export=download&id=${match[1]}`;
+            }
+        }
+        
+        window.open(url, '_blank');
+        closeModal('dl-choice-modal');
+    }
+
+    function downloadViaDrive() {
+        if(!selectedBookForDownload) return;
+        window.open(selectedBookForDownload.fileLink, '_blank');
+        closeModal('dl-choice-modal');
+    }
+
+    // =========================================
+    // 7. ADMIN UPLOAD/EDIT LOGIC
+    // =========================================
     async function uploadToImgbb(fileInputId) {
       const file = document.getElementById(fileInputId).files[0];
       if (!file) return null;
@@ -914,7 +987,7 @@
     }
 
     // =========================================
-    // 7. GOD MODE COMMAND CENTER (ADMIN)
+    // 8. GOD MODE COMMAND CENTER (ADMIN)
     // =========================================
     function verifyPortalCode() { 
         const code = document.getElementById('portal-code').value.trim(); 
@@ -971,7 +1044,6 @@
     function timeAgo(ts) {
       if(!ts) return "Never";
       const diff = Math.floor((Date.now() - ts) / 60000); 
-      // UPDATED: Now shows Just Now for anything under a minute, fitting the 15s ping perfectly
       if(diff < 1) return "Just now"; 
       if(diff < 60) return `${diff}m ago`;
       if(diff < 1440) return `${Math.floor(diff/60)}h ago`;
@@ -991,7 +1063,6 @@
               const uData = doc.data();
               const seen = timeAgo(uData.lastActive);
               
-              // UPDATED: Online if active within the last 45 seconds (45,000 ms). Buffer for 15s ping.
               const isOnline = (currentTime - (uData.lastActive||0)) < 45000;
               const statusHtml = isOnline ? 
                   `<div class="usr-status online"><span class="status-dot"></span> Online</div>` : 
