@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Notes Hub Vault</title>
   
-  <!-- Firebase Compat SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
   <style>
     :root {
       --bg-dark: #0a0b10;
@@ -194,7 +190,7 @@
     
     .modal {
       background: var(--bg-card); border: 1px solid var(--border);
-      padding: 2rem 1.5rem; border-radius: 16px; width: 100%; max-width: 400px; position: relative;
+      padding: 2rem 1.5rem; border-radius: 16px; width: 100%; max-width: 450px; position: relative;
     }
     .close-btn { 
       position: absolute; top: 15px; right: 15px; background: none; border: none; 
@@ -213,9 +209,12 @@
     .auth-toggle { text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); }
     .auth-toggle span { color: var(--neon-cyan); cursor: pointer; font-weight: bold; }
 
-    .admin-user-card {
+    .admin-card-box {
       background: var(--bg-card); border: 1px solid var(--box-red);
       border-radius: 14px; padding: 1rem; margin-bottom: 12px;
+    }
+    .admin-divider {
+      height: 1px; background: var(--border); margin: 1.5rem 0;
     }
   </style>
 </head>
@@ -322,7 +321,7 @@
       <div class="form-group">
         <input type="password" id="portal-code" placeholder="Enter Access Code..." style="text-align: center; font-size: 1.2rem; letter-spacing: 2px;">
       </div>
-      <button class="btn-gradient" onclick="verifyPortalCode()">EXECUTE</button>
+      <button class="btn-gradient" id="btn-verify-portal" onclick="verifyPortalCode()">EXECUTE</button>
     </div>
   </div>
 
@@ -362,9 +361,8 @@
     </div>
   </div>
 
-  <!-- GOD MODE ADMIN PANEL -->
   <div class="modal-overlay" id="admin-modal">
-    <div class="modal" style="max-height: 90vh; overflow-y: auto; max-width: 500px;">
+    <div class="modal" style="max-height: 90vh; overflow-y: auto; max-width: 520px;">
       <button class="close-btn" onclick="closeModal('admin-modal')">&times;</button>
       <h2 style="background: none; -webkit-text-fill-color: var(--box-red); color: var(--box-red);">GOD MODE ADMIN</h2>
       
@@ -374,7 +372,14 @@
         <button class="btn-gradient" style="margin-top: 8px;" onclick="setAnnouncement()">PUSH BROADCAST</button>
       </div>
 
-      <h3 style="font-size: 0.9rem; color: var(--neon-cyan); margin-bottom: 10px; text-transform: uppercase;">Registered User Profiles:</h3>
+      <div class="admin-divider"></div>
+
+      <h3 style="font-size: 0.9rem; color: var(--neon-cyan); margin-bottom: 10px; text-transform: uppercase;">All Posted Books:</h3>
+      <div id="admin-books-list" style="margin-bottom: 2rem;">
+        <div style="color: var(--text-muted); text-align: center;">Loading books...</div>
+      </div>
+
+      <h3 style="font-size: 0.9rem; color: var(--box-orange); margin-bottom: 10px; text-transform: uppercase;">All Registered User Profiles:</h3>
       <div id="admin-user-list">
         <div style="color: var(--text-muted); text-align: center;">Loading profiles...</div>
       </div>
@@ -422,7 +427,16 @@
     </div>
   </div>
 
-  <script>
+  <!-- FIREBASE MODULAR SCRIPT -->
+  <script type="module">
+    // 1. IMPORT MODULAR FUNCTIONS
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getFirestore, collection, onSnapshot, doc, getDoc, getDocs, 
+      setDoc, addDoc, updateDoc, deleteDoc 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 2. YOUR FIREBASE CONFIGURATION
     const firebaseConfig = {
       apiKey: "AIzaSyC0qaz9KkHm7jTP4xhPNQydHmrh90PyGDY",
       authDomain: "retrohopeai.firebaseapp.com",
@@ -434,31 +448,42 @@
       measurementId: "G-18821G606Q"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    // 3. INITIALIZE APP & FIRESTORE
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
+    // 4. APP STATE
     let currentUser = JSON.parse(localStorage.getItem('retro_user')) || null;
-    let isAdmin = false; // strictly false by default
+    let isAdmin = false;
     let allBooks = [];
     let currentFilterTag = 'All';
     let selectedBookForDownload = null;
 
-    window.onload = () => {
-      updateAuthUI();
-      
-      db.ref('books').on('value', snap => {
+    // Initialize UI on load
+    updateAuthUI();
+    loadData();
+
+    // 5. CORE FUNCTIONS (MODULAR STYLE)
+    function loadData() {
+      // Books Listener
+      onSnapshot(collection(db, 'books'), (snapshot) => {
         allBooks = [];
-        snap.forEach(child => { allBooks.push({ id: child.key, ...child.val() }); });
+        snapshot.forEach(document => { allBooks.push({ id: document.id, ...document.data() }); });
         extractAndRenderTags(allBooks);
         filterBooks();
+        if (isAdmin) renderAdminPanelData();
       });
 
-      db.ref('requests').on('value', snap => {
+      // Requests Listener
+      onSnapshot(collection(db, 'requests'), (snapshot) => {
         const reqList = document.getElementById('request-list');
         reqList.innerHTML = '';
-        if(!snap.exists()) reqList.innerHTML = `<div style="color:var(--text-muted); text-align:center;">No pending requests.</div>`;
-        snap.forEach(child => {
-          const req = child.val();
+        if(snapshot.empty) {
+          reqList.innerHTML = `<div style="color:var(--text-muted); text-align:center;">No pending requests.</div>`;
+          return;
+        }
+        snapshot.forEach(document => {
+          const req = document.data();
           reqList.innerHTML += `
             <div class="req-card">
               <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 5px;">${req.title}</div>
@@ -467,49 +492,72 @@
         });
       });
 
-      db.ref('announcement').on('value', snap => {
-        const data = snap.val();
+      // Announcement Listener
+      onSnapshot(doc(db, 'system', 'announcement'), (docSnap) => {
         const box = document.getElementById('broadcast-box');
-        if(data && data.active && data.text.trim() !== '') {
-          document.getElementById('broadcast-text').innerHTML = data.text;
+        if(docSnap.exists() && docSnap.data().active && docSnap.data().text.trim() !== '') {
+          document.getElementById('broadcast-text').innerHTML = docSnap.data().text;
           box.style.display = 'block';
         } else {
           box.style.display = 'none';
         }
       });
+    }
 
-      db.ref('users').on('value', snap => {
-        const userListContainer = document.getElementById('admin-user-list');
-        userListContainer.innerHTML = '';
-        if(!snap.exists()) {
-          userListContainer.innerHTML = `<div style="color:var(--text-muted); text-align:center;">No users found.</div>`;
-          return;
-        }
-        snap.forEach(child => {
-          const uId = child.key;
-          const uData = child.val();
+    async function renderAdminPanelData() {
+      // Load Users
+      const usersSnap = await getDocs(collection(db, 'users'));
+      const userListContainer = document.getElementById('admin-user-list');
+      userListContainer.innerHTML = '';
+      if(usersSnap.empty) {
+        userListContainer.innerHTML = `<div style="color:var(--text-muted); text-align:center;">No users found.</div>`;
+      } else {
+        usersSnap.forEach(document => {
+          const uId = document.id;
+          const uData = document.data();
           userListContainer.innerHTML += `
-            <div class="admin-user-card">
+            <div class="admin-card-box">
               <div style="font-weight: bold; font-size: 1.1rem; color: var(--neon-cyan); margin-bottom: 4px;">${uData.name}</div>
               <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">ID: <span style="color: white; font-weight: bold;">${uId}</span> | Pass: <span style="color: var(--box-orange);">${uData.password}</span></div>
               <button class="btn-gradient" style="padding: 0.6rem; font-size: 0.85rem;" onclick="nukeUser('${uId}')">NUKE USER</button>
             </div>
           `;
         });
-      });
-    };
+      }
 
+      // Load Books (Admin Edit View)
+      const adminBooksContainer = document.getElementById('admin-books-list');
+      adminBooksContainer.innerHTML = '';
+      if(allBooks.length === 0) {
+        adminBooksContainer.innerHTML = `<div style="color:var(--text-muted); text-align:center;">No books found.</div>`;
+        return;
+      }
+      allBooks.forEach(book => {
+        adminBooksContainer.innerHTML += `
+          <div class="admin-card-box" style="border-color: var(--neon-purple);">
+            <div style="font-weight: bold; color: white; margin-bottom: 4px;">${book.title}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">Code: <span style="color: var(--neon-cyan);">${book.secretCode}</span></div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-gradient" style="background: var(--box-orange); padding: 0.4rem; font-size: 0.8rem;" onclick="openEditBook('${book.id}')">EDIT</button>
+              <button class="btn-gradient" style="background: var(--box-red); padding: 0.4rem; font-size: 0.8rem;" onclick="deleteBook('${book.id}')">DELETE</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // UI Navigation
     function switchView(viewId) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
     }
-
     function openModal(id) { 
       document.getElementById(id).classList.add('active'); 
       if(id === 'portal-modal') document.getElementById('portal-code').value = '';
     }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
+    // Authentication
     function openAuth() {
       if(currentUser) {
         document.getElementById('login-form').style.display = 'none';
@@ -538,18 +586,12 @@
       const customId = document.getElementById('reg-id').value.trim();
       const pass = document.getElementById('reg-pass').value.trim();
 
-      if(customId.length < 1 || customId.length > 4) {
-        alert("❌ Please enter a valid 3-digit code!");
-        return;
-      }
+      if(customId.length < 1 || customId.length > 4) { alert("❌ Please enter a valid code!"); return; }
 
-      const snap = await db.ref('users/' + customId).once('value');
-      if (snap.exists()) {
-        alert("❌ This 3-digit code is already taken! Choose another one.");
-        return;
-      }
+      const docSnap = await getDoc(doc(db, 'users', customId));
+      if (docSnap.exists()) { alert("❌ This code is already taken!"); return; }
 
-      await db.ref('users/' + customId).set({ name: name, password: pass });
+      await setDoc(doc(db, 'users', customId), { name: name, password: pass });
       alert(`✅ SUCCESS!\n\nYour Custom ID: ${customId}\nYou can now login.`);
       document.getElementById('register-form').reset();
       toggleAuthMode();
@@ -559,9 +601,10 @@
       e.preventDefault();
       const id = document.getElementById('login-id').value.trim();
       const pass = document.getElementById('login-pass').value;
-      const snap = await db.ref('users/' + id).once('value');
-      if (snap.exists() && snap.val().password === pass) {
-        currentUser = { id: id, ...snap.val() };
+      
+      const docSnap = await getDoc(doc(db, 'users', id));
+      if (docSnap.exists() && docSnap.data().password === pass) {
+        currentUser = { id: id, ...docSnap.data() };
         localStorage.setItem('retro_user', JSON.stringify(currentUser));
         updateAuthUI();
         closeModal('auth-modal');
@@ -572,48 +615,47 @@
     function handleLogout() {
       currentUser = null;
       localStorage.removeItem('retro_user');
-      isAdmin = false; // Lock admin permissions on logout
+      isAdmin = false;
       updateAuthUI();
       closeModal('auth-modal');
       filterBooks();
     }
 
-    function updateAuthUI() {
-      document.getElementById('user-display').innerText = currentUser ? currentUser.name : "Guest";
-    }
+    function updateAuthUI() { document.getElementById('user-display').innerText = currentUser ? currentUser.name : "Guest"; }
 
+    // Admin & Terminal
     function verifyPortalCode() {
       const code = document.getElementById('portal-code').value.trim();
       closeModal('portal-modal');
-      if (code === 'RETROAYUSH') {
-        openModal('upload-modal');
-      } else if (code === 'RETRO2026') {
-        isAdmin = true; // Unlock admin permissions strictly here
+      
+      if (code === 'RETROAYUSH') { openModal('upload-modal'); } 
+      else if (code === 'RETRO2026') {
+        isAdmin = true;
+        renderAdminPanelData();
         openModal('admin-modal');
-        filterBooks();
-      } else {
-        alert("❌ Invalid Terminal Code.");
-      }
+      } else { alert("❌ Invalid Terminal Code."); }
     }
 
-    function setAnnouncement() {
+    async function setAnnouncement() {
       const text = document.getElementById('admin-announcement').value.trim();
-      db.ref('announcement').set({ text: text, active: text !== '' });
+      await setDoc(doc(db, 'system', 'announcement'), { text: text, active: text !== '' });
       alert("📡 Broadcast Pushed!");
       document.getElementById('admin-announcement').value = '';
     }
 
     async function nukeUser(userId) {
       if(confirm(`⚠️ Are you sure you want to nuke user ID ${userId}?`)) {
-        await db.ref('users/' + userId).remove();
-        alert("💥 User profile permanently deleted.");
+        await deleteDoc(doc(db, 'users', userId));
+        alert("💥 User profile deleted.");
+        renderAdminPanelData();
       }
     }
 
     async function deleteBook(bookId) {
       if(confirm("🗑️ Delete this book from vault?")) {
-        await db.ref('books/' + bookId).remove();
+        await deleteDoc(doc(db, 'books', bookId));
         alert("✅ Book deleted.");
+        renderAdminPanelData();
       }
     }
 
@@ -625,6 +667,7 @@
         document.getElementById('edit-author').value = book.author;
         document.getElementById('edit-cover').value = book.cover;
         document.getElementById('edit-secret').value = book.secretCode;
+        closeModal('admin-modal');
         openModal('edit-book-modal');
       }
     }
@@ -638,11 +681,12 @@
         cover: document.getElementById('edit-cover').value.trim(),
         secretCode: document.getElementById('edit-secret').value.trim()
       };
-      await db.ref('books/' + bId).update(updatedData);
+      await updateDoc(doc(db, 'books', bId), updatedData);
       alert("✅ Book updated successfully!");
       closeModal('edit-book-modal');
     }
 
+    // Uploader
     async function handleBookUpload(e) {
       e.preventDefault();
       const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -660,20 +704,14 @@
           formData.append("file", localFile);
           formData.append("upload_preset", uploadPreset);
 
-          const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
-            method: "POST",
-            body: formData
-          });
+          const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, { method: "POST", body: formData });
           const data = await response.json();
-          if (data.secure_url) {
-            finalFileLink = data.secure_url;
-          } else {
-            throw new Error("Cloudinary rejected file size (>10MB). Use Google Drive link instead!");
-          }
+          if (data.secure_url) { finalFileLink = data.secure_url; } 
+          else { throw new Error("Cloudinary rejected file. Use Google Drive link!"); }
         }
 
         if (!finalFileLink) {
-          alert("❌ Please provide either a web link or select a PDF file!");
+          alert("❌ Please provide a link or select a file!");
           submitBtn.innerText = "POST TO BANK";
           submitBtn.disabled = false;
           return;
@@ -689,7 +727,7 @@
           timestamp: Date.now()
         };
         
-        await db.ref('books').push(newBook);
+        await addDoc(collection(db, 'books'), newBook);
         alert("✅ Successfully Uploaded to PDF Bank!");
         e.target.reset(); 
         closeModal('upload-modal');
@@ -701,11 +739,10 @@
       }
     }
 
+    // Filtering & Rendering
     function extractAndRenderTags(books) {
       const tags = new Set(['All']);
-      books.forEach(b => {
-        if(b.tags) b.tags.split(',').forEach(t => { if(t.trim()) tags.add(t.trim()); });
-      });
+      books.forEach(b => { if(b.tags) b.tags.split(',').forEach(t => { if(t.trim()) tags.add(t.trim()); }); });
       const container = document.getElementById('tag-container');
       container.innerHTML = '';
       tags.forEach(tag => {
@@ -714,11 +751,7 @@
       });
     }
 
-    function setTagFilter(tag) {
-      currentFilterTag = tag;
-      extractAndRenderTags(allBooks);
-      filterBooks();
-    }
+    function setTagFilter(tag) { currentFilterTag = tag; extractAndRenderTags(allBooks); filterBooks(); }
 
     function filterBooks() {
       const query = document.getElementById('search-input').value.toLowerCase();
@@ -737,24 +770,12 @@
       }
 
       filtered.forEach(book => {
-        let adminButtons = '';
-        // STRICT CHECK: Only if ADMIN mode is active via RETRO2026 terminal code
-        if (isAdmin) {
-          adminButtons = `
-            <div class="admin-book-controls">
-              <button class="btn-edit-book" onclick="event.stopPropagation(); openEditBook('${book.id}')">EDIT</button>
-              <button class="btn-del-book" onclick="event.stopPropagation(); deleteBook('${book.id}')">DELETE</button>
-            </div>
-          `;
-        }
-
         list.innerHTML += `
           <div class="list-card" onclick="initiateDownload('${book.id}')">
             <img src="${book.cover}" class="list-cover" onerror="this.src='https://via.placeholder.com/55x75?text=PDF'">
             <div class="list-info">
               <div class="list-title">${book.title}</div>
               <div class="list-subtitle">${book.author}</div>
-              ${adminButtons}
             </div>
             <button class="list-action">❯</button>
           </div>
@@ -762,12 +783,9 @@
       });
     }
 
+    // Downloads
     function initiateDownload(bookId) {
-      if (!currentUser) {
-        alert("❌ Guests cannot download files. Please create an ID or Login first.");
-        openAuth();
-        return;
-      }
+      if (!currentUser) { alert("❌ Guests cannot download files. Please Login."); openAuth(); return; }
       selectedBookForDownload = allBooks.find(b => b.id === bookId);
       if(selectedBookForDownload) {
         document.getElementById('download-title').innerText = selectedBookForDownload.title;
@@ -779,31 +797,23 @@
     async function verifyDownloadCode() {
       const input = document.getElementById('download-code-input').value.trim();
       const btn = document.querySelector('#download-modal .btn-gradient');
-      
+
       if(input === selectedBookForDownload.secretCode || input === 'RETRO2026') {
         let fileUrl = selectedBookForDownload.fileLink;
-        btn.innerText = "DOWNLOADING... PLEASE WAIT";
+        btn.innerText = "DOWNLOADING...";
         btn.disabled = true;
 
         try {
-          const driveRegex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
-          const driveMatch = fileUrl.match(driveRegex);
-          if (driveMatch) {
-            fileUrl = `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
-          }
-          
-          if (fileUrl.includes('dropbox.com') && fileUrl.includes('dl=0')) {
-            fileUrl = fileUrl.replace('dl=0', 'dl=1');
-          }
+          const driveMatch = fileUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+          if (driveMatch) { fileUrl = `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`; }
+          if (fileUrl.includes('dropbox.com') && fileUrl.includes('dl=0')) { fileUrl = fileUrl.replace('dl=0', 'dl=1'); }
 
           const response = await fetch(fileUrl);
           const blob = await response.blob();
           const localUrl = window.URL.createObjectURL(blob);
-
           const hiddenLink = document.createElement('a');
           hiddenLink.href = localUrl;
           hiddenLink.download = selectedBookForDownload.title + '.pdf'; 
-          
           document.body.appendChild(hiddenLink);
           hiddenLink.click();
           document.body.removeChild(hiddenLink);
@@ -811,29 +821,44 @@
 
           closeModal('download-modal');
           document.getElementById('download-code-input').value = ''; 
-        } catch (error) {
-          window.open(fileUrl, '_top');
-        } finally {
-          btn.innerText = "UNLOCK PDF";
-          btn.disabled = false;
-        }
-      } else { 
-        alert("❌ Incorrect Unlock Code."); 
-      }
+        } catch (error) { window.open(fileUrl, '_top'); } 
+        finally { btn.innerText = "UNLOCK PDF"; btn.disabled = false; }
+      } else { alert("❌ Incorrect Unlock Code."); }
     }
 
-    function handleRequestSubmit(e) {
+    // Wanted Board
+    async function handleRequestSubmit(e) {
       e.preventDefault();
-      if(!currentUser) {
-        alert("❌ Login required to post a request."); openAuth(); return;
-      }
-      db.ref('requests').push({
+      if(!currentUser) { alert("❌ Login required."); openAuth(); return; }
+      await addDoc(collection(db, 'requests'), {
         title: document.getElementById('req-title-input').value.trim(),
         userId: currentUser.id, userName: currentUser.name, timestamp: Date.now()
-      }).then(() => {
-        alert("✅ Posted to Wanted Board!"); document.getElementById('req-title-input').value = '';
       });
+      alert("✅ Posted to Wanted Board!"); 
+      document.getElementById('req-title-input').value = '';
     }
+
+    // 6. EXPOSE FUNCTIONS TO HTML (REQUIRED FOR MODULE SCRIPTS)
+    window.switchView = switchView;
+    window.openModal = openModal;
+    window.closeModal = closeModal;
+    window.openAuth = openAuth;
+    window.toggleAuthMode = toggleAuthMode;
+    window.handleRegister = handleRegister;
+    window.handleLogin = handleLogin;
+    window.handleLogout = handleLogout;
+    window.verifyPortalCode = verifyPortalCode;
+    window.setAnnouncement = setAnnouncement;
+    window.nukeUser = nukeUser;
+    window.deleteBook = deleteBook;
+    window.openEditBook = openEditBook;
+    window.saveEditedBook = saveEditedBook;
+    window.handleBookUpload = handleBookUpload;
+    window.setTagFilter = setTagFilter;
+    window.filterBooks = filterBooks;
+    window.initiateDownload = initiateDownload;
+    window.verifyDownloadCode = verifyDownloadCode;
+    window.handleRequestSubmit = handleRequestSubmit;
   </script>
 </body>
 </html>
