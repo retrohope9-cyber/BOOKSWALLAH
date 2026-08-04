@@ -93,7 +93,12 @@
     }
     .icon-btn:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,210,255,0.2); }
     .icon-btn.portal { border-color: var(--neon-purple); color: var(--neon-purple); }
-    .badge { position: absolute; top: -5px; right: -5px; background: var(--box-red); color: white; font-size: 0.6rem; font-weight: bold; padding: 2px 5px; border-radius: 10px; display: none; }
+    
+    /* Notification Badge */
+    .badge { 
+        position: absolute; top: -5px; right: -5px; background: var(--box-red); color: white; 
+        font-size: 0.6rem; font-weight: bold; padding: 2px 5px; border-radius: 10px; display: none; 
+    }
 
     .container { padding: 0 1.2rem 2rem; flex: 1; max-width: 600px; margin: 0 auto; width: 100%; }
     .view-section { display: none; animation: fadeIn 0.4s ease forwards; }
@@ -123,7 +128,6 @@
     .box-orange .box-title { color: var(--box-orange); }
 
     .broadcast-content { font-size: 0.9rem; line-height: 1.5; color: #dfe4ea; }
-    .broadcast-img { width: 100%; border-radius: 8px; margin-top: 10px; display: none; }
     .page-header { display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem; }
     .back-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; transition: transform 0.2s; }
     .back-btn:hover { transform: translateX(-4px); }
@@ -170,7 +174,6 @@
     .list-action { padding: 0 10px; color: #aaa; font-size: 1.2rem; font-weight: bold; background: none; border: none; transition: transform 0.2s; }
     .list-card:hover .list-action { transform: translateX(3px); color: var(--neon-purple); }
     
-    /* Pagination */
     .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 1.5rem; padding-bottom: 1rem; }
     .page-btn { 
       background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-main); 
@@ -190,13 +193,7 @@
       background: var(--bg-dark); z-index: 500; flex-direction: column; 
       animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     }
-    #pdf-iframe { 
-      width: 100%; 
-      height: calc(100vh - 65px); 
-      border: none; 
-      background: white; 
-      display: block; 
-    }
+    #pdf-iframe { width: 100%; height: calc(100vh - 65px); border: none; background: white; display: block; }
 
     /* =========================================
        7. FORMS, MODALS & BUTTONS
@@ -211,7 +208,6 @@
     select.form-input { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elevated); color: white; outline: none; margin-bottom: 10px; font-size: 0.9rem; transition: border-color 0.3s; }
     select.form-input:focus { border-color: var(--neon-cyan); }
     
-    /* Z-INDEX FIX: Raised to 9999 so it covers everything, even the PDF reader! */
     .modal-overlay { 
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
       background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); 
@@ -246,42 +242,59 @@
     .auth-toggle span:hover { background: var(--neon-cyan); color: #000; border-color: var(--neon-cyan); transform: scale(1.05); }
 
     /* =========================================
-       8. ADMIN COMMAND CENTER UI
+       8. MULTI-IMAGE GRIDS & COMMUNICATION UI
+       ========================================= */
+    .msg-img-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .msg-img-grid img { max-width: 100%; max-height: 250px; border-radius: 8px; border: 1px solid var(--border); object-fit: cover; }
+    
+    .req-card { background: var(--bg-card); border-left: 4px solid var(--box-orange); padding: 1rem; border-radius: 8px; margin-bottom: 10px; }
+    .thread-reply { padding: 12px; margin-top: 12px; border-radius: 0 8px 8px 0; font-size: 0.85rem; }
+    .thread-admin { border-left: 4px solid var(--neon-cyan); background: var(--bg-elevated); }
+    .thread-user { border-left: 4px solid var(--text-muted); background: var(--bg-dark); }
+    
+    .msg-card { background: var(--bg-elevated); padding: 1rem; border-radius: 8px; margin-bottom: 10px; position: relative; }
+    .msg-time { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px; }
+    .msg-text { font-size: 0.95rem; line-height: 1.4; }
+
+    /* Used for inline Edit Buttons on messages */
+    .cmd-edit-btn { 
+        background: transparent; border: 1px solid var(--border); color: var(--text-muted); 
+        padding: 2px 10px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; 
+    }
+    .cmd-edit-btn:hover { color: white; border-color: white; }
+
+    /* =========================================
+       9. ADMIN COMMAND CENTER UI
        ========================================= */
     .cmd-box { background: var(--bg-card); border-radius: 16px; padding: 1.2rem; margin-bottom: 1.5rem; border: 1.5px solid; position: relative; }
     .cmd-box.border-red { border-color: var(--box-red); }
     .cmd-box.border-cyan { border-color: var(--neon-cyan); }
     .cmd-box.border-orange { border-color: var(--box-orange); }
+    .cmd-box.border-green { border-color: var(--box-green); }
     
     .cmd-title { font-size: 1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     .cmd-title.red { color: var(--box-red); }
     .cmd-title.cyan { color: var(--neon-cyan); }
     .cmd-title.orange { color: var(--box-orange); }
+    .cmd-title.green { color: var(--box-green); }
     
-    .cmd-edit-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 2px 10px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; }
-    .cmd-edit-btn:hover { color: white; border-color: white; }
     .cmd-textarea { background: #000; border: none; color: white; width: 100%; border-radius: 8px; padding: 10px; font-size: 0.9rem; min-height: 60px; margin-bottom: 10px; outline: none; }
     .cmd-file-row { display: flex; align-items: center; gap: 10px; background: #000; padding: 8px; border-radius: 8px; margin-bottom: 15px; }
     .cmd-file-label { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px; display: block; }
     
     .cmd-btn-red { background: var(--box-red); color: white; width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
-    .cmd-btn-red:hover { transform: scale(1.02); }
     .cmd-btn-cyan { background: linear-gradient(90deg, #00d2ff, #3a7bd5); color: white; padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
-    .cmd-btn-cyan:hover { transform: scale(1.05); }
     
     .admin-list-item { background: var(--bg-elevated); padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border: 1px solid var(--border); font-size: 0.9rem;}
     .admin-del-btn { background: var(--box-red); color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 0.7rem; cursor: pointer; font-weight: bold;}
 
     .usr-card { background: var(--bg-card); border: 1.5px solid var(--box-red); border-radius: 16px; padding: 1rem; margin-bottom: 1rem; position: relative; transition: all 0.3s; }
-    .usr-card:hover { box-shadow: 0 4px 12px rgba(255, 71, 87, 0.15); }
     .usr-name { color: var(--box-red); font-size: 1.2rem; font-weight: bold; margin-bottom: 2px; }
     .usr-seen { position: absolute; top: 1rem; right: 1rem; background: #2f3542; color: #a4b0be; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; }
-    
     .usr-status { font-size: 0.75rem; color: #747d8c; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #747d8c; display: inline-block; }
     .usr-status.online .status-dot { background: var(--box-green); animation: pulseOnline 2s infinite; }
     .usr-status.online { color: var(--box-green); font-weight: bold; }
-    
     .usr-info { font-size: 0.9rem; color: white; margin-bottom: 12px; }
     .usr-info span { color: var(--box-orange); }
     
@@ -290,11 +303,6 @@
     .u-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
     .u-btn.cyan { background: var(--neon-cyan); color: #000; }
     .u-btn.red { background: var(--box-red); }
-
-    .msg-card { background: var(--bg-elevated); border-left: 4px solid var(--box-blue); padding: 1rem; border-radius: 8px; margin-bottom: 10px; }
-    .msg-time { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px; }
-    .msg-text { font-size: 0.95rem; line-height: 1.4; }
-    .msg-img { max-width: 100%; border-radius: 8px; margin-top: 8px; }
     .admin-divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
   </style>
 </head>
@@ -319,19 +327,17 @@
       <div class="dashboard-box box-red" id="broadcast-box" style="display: none;">
         <div class="box-title">ADMIN BROADCAST:</div>
         <div class="broadcast-content" id="broadcast-text"></div>
-        <img id="broadcast-img-display" class="broadcast-img" src="">
+        <div class="msg-img-grid" id="broadcast-img-grid"></div>
       </div>
       
       <div class="dashboard-box box-blue" onclick="openAllBooksView()">
         <div class="box-title">📚 BROWSE ALL BOOKS</div>
         <div style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">View entirely paginated library</div>
       </div>
-      
       <div class="dashboard-box box-green" onclick="switchView('view-categories')">
         <div class="box-title">🗂️ BROWSE BY CATEGORY</div>
         <div style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">Find books via folders</div>
       </div>
-      
       <div class="dashboard-box box-orange" onclick="switchView('view-wanted')">
         <div class="box-title">🎯 WANTED BOARD</div>
         <div style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">Request unlisted PDFs</div>
@@ -360,7 +366,6 @@
       </div>
       <div class="folder-grid" id="dynamic-category-grid"></div>
     </div>
-
     <div id="view-subjects" class="view-section">
       <div class="page-header">
         <button class="back-btn" onclick="switchView('view-categories')">❮</button>
@@ -368,7 +373,6 @@
       </div>
       <div class="folder-grid" id="dynamic-subject-grid"></div>
     </div>
-
     <div id="view-vault-folder" class="view-section">
       <div class="page-header">
         <button class="back-btn" onclick="switchView('view-subjects')">❮</button>
@@ -381,17 +385,21 @@
       <div id="folder-book-list"></div>
     </div>
 
-    <!-- WANTED BOARD -->
+    <!-- WANTED BOARD (SUPPORTS MULTIPLE IMAGES) -->
     <div id="view-wanted" class="view-section">
       <div class="page-header">
         <button class="back-btn" onclick="switchView('view-dashboard')">❮</button>
         <div class="page-title">Wanted Board</div>
       </div>
-      <form class="wanted-form" onsubmit="handleRequestSubmit(event)">
+      <form class="wanted-form" onsubmit="handleRequestSubmit(event)" style="background: var(--bg-card); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 2rem;">
         <div class="form-group">
-            <input type="text" id="req-title-input" placeholder="Request a Book, Notes, or Module..." required>
+            <textarea id="req-title-input" placeholder="Describe the Book, Notes, or Formula Sheet you need..." required rows="3" style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elevated); color: white; resize: none; margin-bottom: 10px;"></textarea>
         </div>
-        <button type="submit" class="btn-gradient" style="margin-bottom: 2rem;">POST REQUEST</button>
+        <div class="form-group">
+            <label style="font-size: 0.75rem; color: var(--text-muted);">Attach Reference Images (Multiple Allowed)</label>
+            <input type="file" id="req-img-file" accept="image/*" multiple style="background: var(--bg-elevated); padding: 0.6rem; color: white; width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+        </div>
+        <button type="submit" class="btn-gradient">POST REQUEST</button>
       </form>
       <div id="request-list"></div>
     </div>
@@ -412,40 +420,70 @@
     <div class="modal" style="text-align: center; padding: 2.5rem 1.5rem;">
       <button class="close-btn" onclick="closeModal('dl-choice-modal')">&times;</button>
       <h2 style="margin-bottom: 1.5rem; color: var(--neon-cyan); background: none; -webkit-text-fill-color: var(--neon-cyan);">SAVE BOOK</h2>
-      
-      <button class="btn-gradient smooth-transition" style="margin-bottom: 15px; font-size: 1.05rem;" onclick="downloadViaChrome()">
-        ⬇️ Download in Chrome
-      </button>
-      
+      <button class="btn-gradient smooth-transition" style="margin-bottom: 15px; font-size: 1.05rem;" onclick="downloadViaChrome()">⬇️ Download in Chrome</button>
       <div style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.8rem; font-weight: bold;">-- OR --</div>
-      
-      <button class="btn-gradient smooth-transition" style="background: var(--box-green); font-size: 1.05rem;" onclick="downloadViaDrive()">
-        ☁️ Save to Google Drive
-      </button>
+      <button class="btn-gradient smooth-transition" style="background: var(--box-green); font-size: 1.05rem;" onclick="downloadViaDrive()">☁️ Save to Google Drive</button>
     </div>
   </div>
 
-  <!-- MODALS -->
+  <!-- INBOX MODAL (USER SIDE) -->
   <div class="modal-overlay" id="inbox-modal">
-    <div class="modal" style="max-height: 80vh; overflow-y: auto;">
+    <div class="modal" style="max-height: 85vh; display: flex; flex-direction: column; padding: 1.5rem;">
       <button class="close-btn" onclick="closeModal('inbox-modal')">&times;</button>
       <h2 style="background: none; -webkit-text-fill-color: var(--box-blue); color: var(--box-blue);">INBOX</h2>
-      <div id="inbox-list"><div style="text-align: center; color: var(--text-muted);">No new messages.</div></div>
+      <button class="btn-gradient" style="margin-bottom: 15px;" onclick="openModal('inbox-reply-modal'); closeModal('inbox-modal');">💬 SEND MESSAGE TO ADMIN</button>
+      <div id="inbox-list" style="overflow-y: auto; flex: 1; padding-right: 5px;">
+          <div style="text-align: center; color: var(--text-muted);">No new messages.</div>
+      </div>
     </div>
   </div>
 
+  <!-- EDIT INBOX MESSAGE MODAL -->
+  <div class="modal-overlay" id="edit-inbox-modal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal('edit-inbox-modal')">&times;</button>
+      <h2 style="color: var(--box-blue);">EDIT MESSAGE</h2>
+      <form onsubmit="saveEditInboxMsg(event)">
+        <input type="hidden" id="edit-inbox-id">
+        <div class="form-group">
+            <label>Message</label>
+            <textarea id="edit-inbox-text" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn-gradient">SAVE CHANGES</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SEND REPLY TO ADMIN MODAL (INBOX CHAT) -->
+  <div class="modal-overlay" id="inbox-reply-modal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal('inbox-reply-modal')">&times;</button>
+      <h2 style="color: var(--neon-cyan); background: none; -webkit-text-fill-color: var(--neon-cyan);">REPLY TO ADMIN</h2>
+      <form onsubmit="handleUserInboxReply(event)">
+        <div class="form-group">
+            <label>Message</label>
+            <textarea id="inbox-reply-text" rows="4" placeholder="Type your message here..." required></textarea>
+        </div>
+        <div class="form-group">
+            <label>Attach Images (Optional)</label>
+            <input type="file" id="inbox-reply-img" accept="image/*" multiple style="background: var(--bg-elevated); padding: 0.6rem; color: white; width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+        </div>
+        <button type="submit" class="btn-gradient">SEND MESSAGE</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- AUTH / IDENTIFY MODALS -->
   <div class="modal-overlay" id="auth-modal">
     <div class="modal">
       <button class="close-btn" onclick="closeModal('auth-modal')">&times;</button>
       <h2 id="auth-title">IDENTIFY</h2>
-      
       <form id="login-form" onsubmit="handleLogin(event)">
         <div class="form-group"><label>YOUR 3-DIGIT CODE</label><input type="number" id="login-id" placeholder="e.g. 777" required></div>
         <div class="form-group"><label>PASSWORD</label><input type="password" id="login-pass" placeholder="••••••••" required></div>
         <button type="submit" class="btn-gradient">ENTER HUB</button>
         <div class="auth-toggle">Need an ID? <span onclick="toggleAuthMode()">CREATE NEW ID</span></div>
       </form>
-
       <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
         <div class="form-group"><label>YOUR NAME</label><input type="text" id="reg-name" placeholder="Name" required></div>
         <div class="form-group"><label>CHOOSE YOUR OWN 3-DIGIT CODE</label><input type="number" id="reg-id" placeholder="e.g. 123" min="100" max="999" required></div>
@@ -461,14 +499,7 @@
   </div>
 
   <div class="modal-overlay" id="portal-modal">
-    <div class="modal">
-      <button class="close-btn" onclick="closeModal('portal-modal')">&times;</button>
-      <h2 style="background: none; -webkit-text-fill-color: var(--box-red); color: var(--box-red);">TERMINAL</h2>
-      <div class="form-group">
-        <input type="password" id="portal-code" placeholder="Enter Access Code..." style="text-align: center; font-size: 1.2rem; letter-spacing: 2px;">
-      </div>
-      <button class="btn-gradient" onclick="verifyPortalCode()">EXECUTE</button>
-    </div>
+    <div class="modal"><button class="close-btn" onclick="closeModal('portal-modal')">&times;</button><h2 style="background: none; -webkit-text-fill-color: var(--box-red); color: var(--box-red);">TERMINAL</h2><div class="form-group"><input type="password" id="portal-code" placeholder="Enter Access Code..." style="text-align: center; font-size: 1.2rem; letter-spacing: 2px;"></div><button class="btn-gradient" onclick="verifyPortalCode()">EXECUTE</button></div>
   </div>
 
   <!-- UPLOAD DATA MODAL -->
@@ -479,22 +510,15 @@
       <form onsubmit="handleBookUpload(event)">
         <div class="form-group"><label>Title</label><input type="text" id="up-title" required></div>
         <div class="form-group"><label>Subtitle / Details</label><input type="text" id="up-author" required></div>
-        
         <div class="form-group"><label>Category</label><select id="up-category" class="form-input" required></select></div>
         <div class="form-group"><label>Subject</label><select id="up-subject" class="form-input" required></select></div>
-        
         <div class="form-group">
           <label>Cover Image (Link OR Upload)</label>
           <input type="url" id="up-cover-url" placeholder="Paste Image Link Here...">
           <div style="text-align: center; color: var(--text-muted); margin: 5px 0;">-- OR --</div>
           <input type="file" id="up-cover-file" accept="image/*" style="background: var(--bg-elevated); padding: 0.6rem; color: white; width: 100%; border: 1px solid var(--border); border-radius: 8px;">
         </div>
-
-        <div class="form-group">
-          <label>File Link (Google Drive / Web URL)</label>
-          <input type="url" id="up-file-url" placeholder="Paste Drive Link Here..." required>
-        </div>
-        
+        <div class="form-group"><label>File Link (Google Drive / Web URL)</label><input type="url" id="up-file-url" placeholder="Paste Drive Link Here..." required></div>
         <div class="form-group"><label>Tags (Comma Separated)</label><input type="text" id="up-tags" placeholder="Module, NCERT, PYQ" required></div>
         <div class="form-group"><label style="color: var(--neon-cyan);">Secret Unlock Code</label><input type="text" id="up-secret" required></div>
         <button type="submit" class="btn-gradient">POST TO BANK</button>
@@ -502,7 +526,7 @@
     </div>
   </div>
 
-  <!-- EDIT DATA MODAL -->
+  <!-- EDIT BOOK MODAL -->
   <div class="modal-overlay" id="edit-book-modal">
     <div class="modal" style="max-height: 90vh; overflow-y: auto;">
       <button class="close-btn" onclick="closeModal('edit-book-modal')">&times;</button>
@@ -514,18 +538,73 @@
         <div class="form-group"><label>Subtitle / Details</label><input type="text" id="edit-author" required></div>
         <div class="form-group"><label>Category</label><select id="edit-category" class="form-input" required></select></div>
         <div class="form-group"><label>Subject</label><select id="edit-subject" class="form-input" required></select></div>
-        
         <div class="form-group">
-          <label>Change Cover Image (Leave blank to keep old)</label>
+          <label>Change Cover Image</label>
           <input type="url" id="edit-cover-url" placeholder="Paste New Image Link Here...">
           <div style="text-align: center; color: var(--text-muted); margin: 5px 0;">-- OR --</div>
           <input type="file" id="edit-cover-file" accept="image/*" style="background: var(--bg-elevated); padding: 0.6rem; color: white; width: 100%; border: 1px solid var(--border); border-radius: 8px;">
         </div>
-
-        <div class="form-group"><label>File Link (Google Drive / Web URL)</label><input type="url" id="edit-file-url" placeholder="Paste Drive Link Here..." required></div>
-        <div class="form-group"><label>Tags (Comma Separated)</label><input type="text" id="edit-tags" placeholder="Module, NCERT, PYQ" required></div>
+        <div class="form-group"><label>File Link</label><input type="url" id="edit-file-url" placeholder="Paste Drive Link Here..." required></div>
+        <div class="form-group"><label>Tags</label><input type="text" id="edit-tags" placeholder="Module, NCERT, PYQ" required></div>
         <div class="form-group"><label>Secret Unlock Code</label><input type="text" id="edit-secret" required></div>
         <button type="submit" class="btn-gradient">UPDATE BOOK</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT WANTED REQUEST MODAL -->
+  <div class="modal-overlay" id="edit-req-modal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal('edit-req-modal')">&times;</button>
+      <h2 style="color: var(--box-orange);">EDIT REQUEST</h2>
+      <form onsubmit="saveEditRequest(event)">
+        <input type="hidden" id="edit-req-id">
+        <div class="form-group">
+            <label>Description</label>
+            <textarea id="edit-req-text" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn-gradient">SAVE CHANGES</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TWO-WAY THREAD REPLY MODAL (WANTED BOARD) -->
+  <div class="modal-overlay" id="reply-modal">
+    <div class="modal" style="max-height: 90vh; overflow-y: auto;">
+      <button class="close-btn" onclick="closeModal('reply-modal')">&times;</button>
+      <h2 style="color: var(--neon-cyan); background: none; -webkit-text-fill-color: var(--neon-cyan);">SEND REPLY</h2>
+      <form onsubmit="handleThreadReply(event)">
+        <input type="hidden" id="reply-req-id">
+        <div class="form-group">
+            <label>Message / Answer</label>
+            <textarea id="reply-text" rows="3" placeholder="Type your reply here..." required></textarea>
+        </div>
+        <div class="form-group">
+            <label>Link (Optional)</label>
+            <input type="url" id="reply-link" placeholder="https://drive.google.com/...">
+        </div>
+        <div class="form-group">
+            <label>Attach Images (Multiple Allowed)</label>
+            <input type="file" id="reply-img-file" accept="image/*" multiple style="background: var(--bg-elevated); padding: 0.6rem; color: white; width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+        </div>
+        <button type="submit" class="btn-gradient">POST REPLY</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT REPLY MODAL (WANTED BOARD) -->
+  <div class="modal-overlay" id="edit-reply-modal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal('edit-reply-modal')">&times;</button>
+      <h2 style="color: var(--neon-cyan);">EDIT REPLY</h2>
+      <form onsubmit="saveEditThreadReply(event)">
+        <input type="hidden" id="edit-reply-req-id">
+        <input type="hidden" id="edit-reply-id">
+        <div class="form-group">
+            <label>Message</label>
+            <textarea id="edit-reply-text" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn-gradient">SAVE CHANGES</button>
       </form>
     </div>
   </div>
@@ -538,9 +617,7 @@
       <p style="text-align: center; color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">
         Enter code to read:<br><strong id="download-title" style="color: white; display:block; margin-top:5px;"></strong>
       </p>
-      <div class="form-group">
-        <input type="text" id="download-code-input" placeholder="Enter Code..." style="text-align: center; font-size: 1.1rem;">
-      </div>
+      <div class="form-group"><input type="text" id="download-code-input" placeholder="Enter Code..." style="text-align: center; font-size: 1.1rem;"></div>
       <button class="btn-gradient" onclick="verifyDownloadCode()">UNLOCK TO READ</button>
     </div>
   </div>
@@ -551,43 +628,39 @@
       <button class="close-btn" onclick="closeModal('admin-modal')">&times;</button>
       <h2 style="background: none; -webkit-text-fill-color: white; color: white; margin-bottom: 2rem;">COMMAND CENTER</h2>
       
-      <div class="cmd-box border-orange">
-        <div class="cmd-title orange">MANAGE CATEGORIES</div>
-        <div style="display:flex; gap:10px; margin-bottom:10px;">
-          <input type="text" id="new-cat-name" class="cmd-textarea" style="min-height:auto; margin:0;" placeholder="New Category...">
-          <button class="cmd-btn-cyan" style="padding: 10px;" onclick="addFolderOption('categories', 'new-cat-name')">ADD</button>
-        </div>
-        <div id="admin-cat-list" style="margin-bottom: 20px;"></div>
-
-        <div class="cmd-title orange">MANAGE SUBJECTS</div>
-        <div style="display:flex; gap:10px; margin-bottom:10px;">
-          <input type="text" id="new-sub-name" class="cmd-textarea" style="min-height:auto; margin:0;" placeholder="New Subject...">
-          <button class="cmd-btn-cyan" style="padding: 10px;" onclick="addFolderOption('subjects', 'new-sub-name')">ADD</button>
-        </div>
-        <div id="admin-sub-list"></div>
-      </div>
-
-      <div class="cmd-box border-red">
-        <div class="cmd-title red">GLOBAL BROADCAST <button class="cmd-edit-btn" onclick="document.getElementById('b-text').value=''">CLEAR</button></div>
-        <textarea id="b-text" class="cmd-textarea" placeholder="Welcome! Explore handwritten notes..."></textarea>
-        <span class="cmd-file-label">Attach Image (Optional):</span>
-        <div class="cmd-file-row">
-          <input type="file" id="b-img" accept="image/*" style="color:white; font-size: 0.8rem; width: 100%;">
-        </div>
-        <button class="cmd-btn-red" id="b-btn" onclick="pushGlobalBroadcast()">BROADCAST</button>
+      <!-- ADMIN INBOX LIST -->
+      <div class="cmd-box border-green">
+        <div class="cmd-title green">USER INBOX (MESSAGES FROM USERS)</div>
+        <div id="admin-inbox-list" style="max-height: 350px; overflow-y: auto;"></div>
       </div>
 
       <div class="cmd-box border-cyan">
         <div class="cmd-title cyan">SEND UPDATE TO INBOX</div>
         <input type="text" id="inbox-target" placeholder="Target ID (Leave blank for EVERYONE)" class="cmd-textarea" style="min-height: auto;">
         <textarea id="inbox-msg" class="cmd-textarea" placeholder="Type a message to the inbox..."></textarea>
-        <span class="cmd-file-label">Attach Image (Optional):</span>
+        <span class="cmd-file-label">Attach Images (Multiple Allowed):</span>
         <div style="display: flex; gap: 10px; align-items: center;">
           <div class="cmd-file-row" style="flex:1; margin-bottom:0;">
-            <input type="file" id="inbox-img" accept="image/*" style="color:white; font-size: 0.8rem; width: 100%;">
+            <input type="file" id="inbox-img" accept="image/*" multiple style="color:white; font-size: 0.8rem; width: 100%;">
           </div>
           <button class="cmd-btn-cyan" id="inbox-btn" onclick="pushInboxMessage()">SEND</button>
         </div>
+      </div>
+
+      <div class="cmd-box border-red">
+        <div class="cmd-title red">GLOBAL BROADCAST <button class="cmd-edit-btn" onclick="document.getElementById('b-text').value=''">CLEAR</button></div>
+        <textarea id="b-text" class="cmd-textarea" placeholder="Welcome! Explore handwritten notes..."></textarea>
+        <span class="cmd-file-label">Attach Image:</span>
+        <div class="cmd-file-row"><input type="file" id="b-img" accept="image/*" style="color:white; font-size: 0.8rem; width: 100%;"></div>
+        <button class="cmd-btn-red" id="b-btn" onclick="pushGlobalBroadcast()">BROADCAST</button>
+      </div>
+
+      <div class="cmd-box border-orange">
+        <div class="cmd-title orange">MANAGE FOLDERS</div>
+        <div style="display:flex; gap:10px; margin-bottom:10px;"><input type="text" id="new-cat-name" class="cmd-textarea" style="min-height:auto; margin:0;" placeholder="New Category..."><button class="cmd-btn-cyan" style="padding: 10px;" onclick="addFolderOption('categories', 'new-cat-name')">ADD</button></div>
+        <div id="admin-cat-list" style="margin-bottom: 20px;"></div>
+        <div style="display:flex; gap:10px; margin-bottom:10px;"><input type="text" id="new-sub-name" class="cmd-textarea" style="min-height:auto; margin:0;" placeholder="New Subject..."><button class="cmd-btn-cyan" style="padding: 10px;" onclick="addFolderOption('subjects', 'new-sub-name')">ADD</button></div>
+        <div id="admin-sub-list"></div>
       </div>
 
       <div class="admin-divider"></div>
@@ -617,220 +690,214 @@
     let isAdmin = false;
     let allBooks = []; 
     let allMessages = [];
+    let allRequestsData = []; // Used to easily grab request text for Editing
     let selectedBookForDownload = null;
     let appFolders = { categories: [], subjects: [] };
     
     let browseCategory = 'General'; let browseSubject = 'General'; 
-    let currentFilterTagAll = 'ALL';
-    let currentFilterTagFolder = 'ALL';
+    let currentFilterTagAll = 'ALL'; let currentFilterTagFolder = 'ALL';
+    let allBooksFiltered = []; let currentPage = 1; const booksPerPage = 30;
     
-    let allBooksFiltered = []; 
-    let currentPage = 1; 
-    const booksPerPage = 30;
     let adminUsersUnsubscribe = null; 
+    let lastSeenInbox = parseInt(localStorage.getItem('retro_inbox_seen')) || 0; // The true fix for the notification bug!
 
     // =========================================
-    // 2. STARTUP & LIVE PRESENCE (15 SECOND PING)
+    // 2. STARTUP & LIVE PRESENCE
     // =========================================
     window.onload = () => { 
-      updateAuthUI(); 
-      loadData(); 
-      pingOnlineStatus();
-      setInterval(pingOnlineStatus, 15000); 
+      updateAuthUI(); loadData(); pingOnlineStatus(); setInterval(pingOnlineStatus, 15000); 
     };
 
     function pingOnlineStatus() {
-        if(currentUser) {
-            db.collection('users').doc(currentUser.id).update({ lastActive: Date.now() }).catch(()=>{});
-        }
+        if(currentUser) db.collection('users').doc(currentUser.id).update({ lastActive: Date.now() }).catch(()=>{});
     }
 
     function loadData() {
+      // Books
       db.collection('books').onSnapshot(snapshot => {
-        allBooks = []; 
-        snapshot.forEach(doc => { 
-            const data = doc.data(); 
-            allBooks.push({ id: doc.id, category: data.category || 'General', subject: data.subject || 'General', ...data }); 
-        });
+        allBooks = []; snapshot.forEach(doc => { const data = doc.data(); allBooks.push({ id: doc.id, category: data.category || 'General', subject: data.subject || 'General', ...data }); });
         allBooks.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
-        
         if(document.getElementById('view-all-books').classList.contains('active')) handleSearchAll();
         if(document.getElementById('view-vault-folder').classList.contains('active')) filterFolderBooks();
         if (isAdmin) renderAdminBooksList();
       });
 
+      // Folders
       db.collection('system').doc('folders').onSnapshot(doc => {
         if(doc.exists) {
-            appFolders = doc.data();
-            renderDynamicFolders(); populateDropdowns();
+            appFolders = doc.data(); renderDynamicFolders(); populateDropdowns();
             if(isAdmin) renderAdminFolderLists();
         } else {
             db.collection('system').doc('folders').set({ categories: ["Class 11", "Class 12", "JEE Mains", "NEET"], subjects: ["Physics", "Chemistry", "Mathematics", "Biology"] });
         }
       });
 
+      // Broadcast
       db.collection('system').doc('announcement').onSnapshot(doc => {
-        const box = document.getElementById('broadcast-box'); const imgDisplay = document.getElementById('broadcast-img-display');
+        const box = document.getElementById('broadcast-box'); const grid = document.getElementById('broadcast-img-grid');
         if(doc.exists && doc.data().active && doc.data().text.trim() !== '') {
           document.getElementById('broadcast-text').innerHTML = doc.data().text.replace(/\n/g, '<br>'); 
-          if(doc.data().imageUrl) { imgDisplay.src = doc.data().imageUrl; imgDisplay.style.display = 'block'; } else { imgDisplay.style.display = 'none'; }
+          
+          let imgHtml = '';
+          if(doc.data().imageUrl) imgHtml += `<img src="${doc.data().imageUrl}">`;
+          if(doc.data().images) doc.data().images.forEach(url => imgHtml += `<img src="${url}">`);
+          grid.innerHTML = imgHtml;
           box.style.display = 'block';
         } else { box.style.display = 'none'; }
       });
 
+      // Inbox Messages
       db.collection('messages').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-        allMessages = []; snapshot.forEach(doc => { allMessages.push(doc.data()); }); renderInbox();
+        allMessages = []; 
+        snapshot.forEach(doc => { allMessages.push({ id: doc.id, ...doc.data() }); }); 
+        renderInbox();
+        if(isAdmin) renderAdminInbox();
       });
       
+      // Wanted Board (With Edit Support)
       db.collection('requests').onSnapshot(snapshot => {
         const reqList = document.getElementById('request-list'); reqList.innerHTML = '';
         if(snapshot.empty) { reqList.innerHTML = `<div style="text-align:center; color:var(--text-muted);">No pending requests.</div>`; return; }
-        snapshot.forEach(doc => { 
-            const req = doc.data(); 
-            reqList.innerHTML += `<div class="req-card"><div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 5px;">${req.title}</div><div style="font-size: 0.75rem; color: var(--text-muted);">By ID: <span style="color:var(--box-orange);">${req.userId}</span></div></div>`; 
+        
+        let reqs = []; snapshot.forEach(doc => { reqs.push({ id: doc.id, ...doc.data() }); });
+        reqs.sort((a, b) => b.timestamp - a.timestamp);
+        allRequestsData = reqs; // Save to memory for easy editing
+
+        reqs.forEach(req => { 
+            let userImgs = '';
+            if(req.imageUrl) userImgs += `<img src="${req.imageUrl}">`;
+            if(req.images) req.images.forEach(url => userImgs += `<img src="${url}">`);
+            let userImgHtml = userImgs ? `<div class="msg-img-grid">${userImgs}</div>` : '';
+            
+            let threadHtml = '';
+            
+            if (req.replyText || req.replyImage || req.replyLink) {
+                let rImg = req.replyImage ? `<img src="${req.replyImage}">` : '';
+                let rLink = req.replyLink ? `<a href="${req.replyLink}" target="_blank" style="color:var(--neon-cyan); display:block; margin-top:8px; font-weight:bold;">🔗 Click to Open Link</a>` : '';
+                let rText = req.replyText ? `<div>${req.replyText.replace(/\n/g, '<br>')}</div>` : '';
+                threadHtml += `<div class="thread-reply thread-admin"><div style="color:var(--neon-cyan); font-weight:bold; margin-bottom:5px; font-size:0.75rem;">ADMIN REPLY:</div>${rText}<div class="msg-img-grid">${rImg}</div>${rLink}</div>`;
+            }
+
+            if (req.replies && req.replies.length > 0) {
+                req.replies.forEach(r => {
+                    let rImgs = (r.images || []).map(url => `<img src="${url}">`).join('');
+                    let rLink = r.link ? `<a href="${r.link}" target="_blank" style="color:var(--neon-cyan); display:block; margin-top:8px; font-weight:bold;">🔗 Click to Open Link</a>` : '';
+                    let rStyle = r.isAdmin ? `thread-admin` : `thread-user`;
+                    let rHeader = r.isAdmin ? `ADMIN:` : `USER ${r.sender}:`;
+                    let rColor = r.isAdmin ? `var(--neon-cyan)` : `var(--box-orange)`;
+                    
+                    let isReplyOwner = (currentUser && currentUser.id === r.sender) || (isAdmin && r.isAdmin);
+                    let editReplyBtn = isReplyOwner ? `<button class="cmd-edit-btn" style="float:right;" onclick="openEditThreadReply('${req.id}', '${r.replyId}')">EDIT</button>` : '';
+
+                    threadHtml += `
+                    <div class="thread-reply ${rStyle}">
+                        <div style="font-size: 0.75rem; font-weight: bold; margin-bottom: 5px; color: ${rColor};">${rHeader} ${editReplyBtn}</div>
+                        <div>${r.text.replace(/\n/g, '<br>')}</div>
+                        <div class="msg-img-grid">${rImgs}</div>
+                        ${rLink}
+                    </div>`;
+                });
+            }
+
+            let actionBtns = '';
+            let isOwner = currentUser && currentUser.id === req.userId;
+            
+            if (isAdmin || isOwner) {
+                actionBtns += `<button class="btn-gradient" style="padding:6px 12px; font-size:0.75rem; width:auto; margin-top:10px; margin-right:10px;" onclick="openReplyModal('${req.id}')">REPLY</button>`;
+            }
+            if (isOwner) {
+                 actionBtns += `<button class="btn-gradient" style="padding:6px 12px; font-size:0.75rem; width:auto; margin-top:10px; margin-right:10px; background:var(--box-orange);" onclick="openEditRequest('${req.id}')">EDIT</button>`;
+            }
+            if (isAdmin) {
+                actionBtns += `<button class="btn-gradient" style="padding:6px 12px; font-size:0.75rem; width:auto; margin-top:10px; background:var(--box-red);" onclick="deleteRequest('${req.id}')">DELETE</button>`;
+            }
+
+            reqList.innerHTML += `
+            <div class="req-card">
+                <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 5px;">${req.title.replace(/\n/g, '<br>')}</div>
+                ${userImgHtml}
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top:8px;">Requested By ID: <span style="color:var(--box-orange);">${req.userId}</span></div>
+                ${threadHtml}
+                ${actionBtns}
+            </div>`; 
         });
       });
     }
 
     // =========================================
-    // 3. FOLDERS & DROPDOWNS
+    // 3. MULTIPLE IMAGE UPLOAD SYSTEM
     // =========================================
+    async function uploadMultipleToImgbb(fileInputId) {
+      const fileInput = document.getElementById(fileInputId);
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) return [];
+      const files = fileInput.files; let urls = [];
+      for (let i = 0; i < files.length; i++) {
+        const imgData = new FormData(); imgData.append("image", files[i]);
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: "POST", body: imgData });
+        const json = await res.json(); 
+        if(json.success) urls.push(json.data.url); else throw new Error("Image Upload Failed for one of the files.");
+      }
+      return urls;
+    }
+    async function uploadSingleToImgbb(fileInputId) { const urls = await uploadMultipleToImgbb(fileInputId); return urls.length > 0 ? urls[0] : null; }
+
+    // =========================================
+    // 4. NAVIGATION & FOLDERS
+    // =========================================
+    function switchView(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); document.getElementById(viewId).classList.add('active'); }
+    function openModal(id) { document.getElementById(id).classList.add('active'); if(id === 'portal-modal') document.getElementById('portal-code').value = ''; }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
     function renderDynamicFolders() {
         const catGrid = document.getElementById('dynamic-category-grid'); const subGrid = document.getElementById('dynamic-subject-grid');
         catGrid.innerHTML = ''; appFolders.categories.forEach(cat => { catGrid.innerHTML += `<div class="folder-card" onclick="selectCategory('${cat}')"><div class="folder-icon">📁</div><div class="folder-name">${cat}</div></div>`; });
         subGrid.innerHTML = ''; appFolders.subjects.forEach(sub => { subGrid.innerHTML += `<div class="folder-card" onclick="selectSubject('${sub}')"><div class="folder-icon">📁</div><div class="folder-name">${sub}</div></div>`; });
     }
     function populateDropdowns() {
-        const upCat = document.getElementById('up-category'); const editCat = document.getElementById('edit-category');
-        const upSub = document.getElementById('up-subject'); const editSub = document.getElementById('edit-subject');
-        upCat.innerHTML = ''; editCat.innerHTML = '';
-        appFolders.categories.forEach(cat => { const opt = `<option value="${cat}">${cat}</option>`; upCat.innerHTML += opt; editCat.innerHTML += opt; });
-        upSub.innerHTML = ''; editSub.innerHTML = '';
-        appFolders.subjects.forEach(sub => { const opt = `<option value="${sub}">${sub}</option>`; upSub.innerHTML += opt; editSub.innerHTML += opt; });
+        const upCat = document.getElementById('up-category'); const editCat = document.getElementById('edit-category'); const upSub = document.getElementById('up-subject'); const editSub = document.getElementById('edit-subject');
+        upCat.innerHTML = ''; editCat.innerHTML = ''; appFolders.categories.forEach(cat => { const opt = `<option value="${cat}">${cat}</option>`; upCat.innerHTML += opt; editCat.innerHTML += opt; });
+        upSub.innerHTML = ''; editSub.innerHTML = ''; appFolders.subjects.forEach(sub => { const opt = `<option value="${sub}">${sub}</option>`; upSub.innerHTML += opt; editSub.innerHTML += opt; });
     }
 
-    // =========================================
-    // 4. NAVIGATION & PAGINATION SYSTEM
-    // =========================================
-    function switchView(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); document.getElementById(viewId).classList.add('active'); }
-    function openModal(id) { document.getElementById(id).classList.add('active'); if(id === 'portal-modal') document.getElementById('portal-code').value = ''; }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-    function openAllBooksView() { 
-        document.getElementById('search-input-all').value = ''; 
-        currentFilterTagAll = 'ALL'; 
-        extractAndRenderTagsAll();
-        handleSearchAll(); 
-        switchView('view-all-books'); 
-    }
-
-    function extractAndRenderTagsAll() {
-      const tags = new Set(['ALL']); 
-      allBooks.forEach(b => { 
-          if(b.tags) {
-              b.tags.split(',').forEach(t => { 
-                  if(t.trim()) tags.add(t.trim().toUpperCase()); 
-              }); 
-          }
-      });
-      const container = document.getElementById('tag-container-all'); 
-      container.innerHTML = ''; 
-      
-      tags.forEach(tag => { 
-          container.innerHTML += `<button class="pill smooth-transition ${tag === currentFilterTagAll ? 'active' : ''}" onclick="setTagFilterAll(this, '${tag}')">${tag}</button>`; 
-      });
-    }
-
-    function setTagFilterAll(btn, tag) { 
-        currentFilterTagAll = tag; 
-        document.querySelectorAll('#tag-container-all .pill').forEach(p => p.classList.remove('active')); 
-        btn.classList.add('active'); 
-        handleSearchAll(); 
-    }
-    
+    function openAllBooksView() { document.getElementById('search-input-all').value = ''; currentFilterTagAll = 'ALL'; extractAndRenderTagsAll(); handleSearchAll(); switchView('view-all-books'); }
+    function extractAndRenderTagsAll() { const tags = new Set(['ALL']); allBooks.forEach(b => { if(b.tags) { b.tags.split(',').forEach(t => { if(t.trim()) tags.add(t.trim().toUpperCase()); }); } }); const container = document.getElementById('tag-container-all'); container.innerHTML = ''; tags.forEach(tag => { container.innerHTML += `<button class="pill smooth-transition ${tag === currentFilterTagAll ? 'active' : ''}" onclick="setTagFilterAll(this, '${tag}')">${tag}</button>`; }); }
+    function setTagFilterAll(btn, tag) { currentFilterTagAll = tag; document.querySelectorAll('#tag-container-all .pill').forEach(p => p.classList.remove('active')); btn.classList.add('active'); handleSearchAll(); }
     function handleSearchAll() { 
         const query = document.getElementById('search-input-all').value.toLowerCase(); 
-        
         allBooksFiltered = allBooks.filter(b => {
             const matchesSearch = b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
-            const bookTagsUppercase = b.tags ? b.tags.toUpperCase() : '';
-            const matchesTag = currentFilterTagAll === 'ALL' || bookTagsUppercase.includes(currentFilterTagAll);
+            const matchesTag = currentFilterTagAll === 'ALL' || (b.tags && b.tags.toUpperCase().includes(currentFilterTagAll));
             return matchesSearch && matchesTag;
         });
-        
-        currentPage = 1; 
-        renderPaginatedBooks(); 
+        currentPage = 1; renderPaginatedBooks(); 
     }
-    
     function changePage(newPage) { currentPage = newPage; renderPaginatedBooks(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
     function renderPaginatedBooks() {
       const list = document.getElementById('all-books-list'); const pagination = document.getElementById('pagination-controls'); list.innerHTML = ''; pagination.innerHTML = '';
       if(allBooksFiltered.length === 0) { list.innerHTML = `<div style="text-align:center; color:#747d8c; padding:2rem;">No PDFs found.</div>`; return; }
-      
       const startIndex = (currentPage - 1) * booksPerPage; const endIndex = startIndex + booksPerPage; const booksToRender = allBooksFiltered.slice(startIndex, endIndex);
-      booksToRender.forEach(book => { 
-          list.innerHTML += `<div class="list-card" onclick="initiateRead('${book.id}')"><img src="${book.cover}" class="list-cover" onerror="this.src='https://via.placeholder.com/55x75?text=PDF'"><div class="list-info"><div class="list-title">${book.title}</div><div class="list-subtitle">${book.author} | ${book.category}</div></div><button class="list-action">❯</button></div>`; 
-      });
-      
+      booksToRender.forEach(book => { list.innerHTML += `<div class="list-card" onclick="initiateRead('${book.id}')"><img src="${book.cover}" class="list-cover" onerror="this.src='https://via.placeholder.com/55x75?text=PDF'"><div class="list-info"><div class="list-title">${book.title}</div><div class="list-subtitle">${book.author} | ${book.category}</div></div><button class="list-action">❯</button></div>`; });
       const totalPages = Math.ceil(allBooksFiltered.length / booksPerPage); if (totalPages <= 1) return;
       pagination.innerHTML += `<button class="page-btn smooth-transition" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">❮</button>`;
-      
       let pages = [];
       if (totalPages <= 5) { for (let i = 1; i <= totalPages; i++) pages.push(i); } else { if (currentPage <= 3) pages = [1, 2, 3, 4, '...', totalPages]; else if (currentPage >= totalPages - 2) pages = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages]; else pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages]; }
-      
       pages.forEach(p => { if (p === '...') pagination.innerHTML += `<span class="page-dots">...</span>`; else pagination.innerHTML += `<button class="page-btn smooth-transition ${p === currentPage ? 'active' : ''}" onclick="changePage(${p})">${p}</button>`; });
       pagination.innerHTML += `<button class="page-btn smooth-transition" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">❯</button>`;
     }
-
+    
     function selectCategory(cat) { browseCategory = cat; document.getElementById('subject-header-title').innerText = cat + " Subjects"; switchView('view-subjects'); }
-    
-    function selectSubject(sub) { 
-        browseSubject = sub; document.getElementById('vault-header-title').innerText = browseCategory + " ❯ " + sub; 
-        document.getElementById('search-input-folder').value = ''; 
-        currentFilterTagFolder = 'ALL';
-        extractAndRenderTagsFolder(); 
-        filterFolderBooks(); 
-        switchView('view-vault-folder'); 
-    }
-    
-    function extractAndRenderTagsFolder() {
-      const tags = new Set(['ALL']); 
-      allBooks.forEach(b => { 
-          if(b.category === browseCategory && b.subject === browseSubject && b.tags) {
-              b.tags.split(',').forEach(t => { if(t.trim()) tags.add(t.trim().toUpperCase()); }); 
-          }
-      });
-      const container = document.getElementById('tag-container'); container.innerHTML = ''; 
-      
-      tags.forEach(tag => { container.innerHTML += `<button class="pill smooth-transition ${tag === currentFilterTagFolder ? 'active' : ''}" onclick="setTagFilterFolder(this, '${tag}')">${tag}</button>`; });
-    }
-    
-    function setTagFilterFolder(btn, tag) { 
-        currentFilterTagFolder = tag; 
-        document.querySelectorAll('#tag-container .pill').forEach(p => p.classList.remove('active')); 
-        btn.classList.add('active'); 
-        filterFolderBooks(); 
-    }
-    
+    function selectSubject(sub) { browseSubject = sub; document.getElementById('vault-header-title').innerText = browseCategory + " ❯ " + sub; document.getElementById('search-input-folder').value = ''; currentFilterTagFolder = 'ALL'; extractAndRenderTagsFolder(); filterFolderBooks(); switchView('view-vault-folder'); }
+    function extractAndRenderTagsFolder() { const tags = new Set(['ALL']); allBooks.forEach(b => { if(b.category === browseCategory && b.subject === browseSubject && b.tags) { b.tags.split(',').forEach(t => { if(t.trim()) tags.add(t.trim().toUpperCase()); }); } }); const container = document.getElementById('tag-container'); container.innerHTML = ''; tags.forEach(tag => { container.innerHTML += `<button class="pill smooth-transition ${tag === currentFilterTagFolder ? 'active' : ''}" onclick="setTagFilterFolder(this, '${tag}')">${tag}</button>`; }); }
+    function setTagFilterFolder(btn, tag) { currentFilterTagFolder = tag; document.querySelectorAll('#tag-container .pill').forEach(p => p.classList.remove('active')); btn.classList.add('active'); filterFolderBooks(); }
     function filterFolderBooks() {
-      const query = document.getElementById('search-input-folder').value.toLowerCase(); 
-      const list = document.getElementById('folder-book-list'); list.innerHTML = '';
-      
-      const filtered = allBooks.filter(b => { 
-          if(b.category !== browseCategory || b.subject !== browseSubject) return false; 
-          const matchesSearch = b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
-          const bookTagsUppercase = b.tags ? b.tags.toUpperCase() : '';
-          const matchesTag = currentFilterTagFolder === 'ALL' || bookTagsUppercase.includes(currentFilterTagFolder);
-          return matchesSearch && matchesTag; 
-      });
-      
+      const query = document.getElementById('search-input-folder').value.toLowerCase(); const list = document.getElementById('folder-book-list'); list.innerHTML = '';
+      const filtered = allBooks.filter(b => { if(b.category !== browseCategory || b.subject !== browseSubject) return false; const matchesSearch = b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query); const matchesTag = currentFilterTagFolder === 'ALL' || (b.tags && b.tags.toUpperCase().includes(currentFilterTagFolder)); return matchesSearch && matchesTag; });
       if(filtered.length === 0) { list.innerHTML = `<div style="text-align:center; color:#747d8c; padding:2rem;">No PDFs found in this folder.</div>`; return; }
       filtered.forEach(book => { list.innerHTML += `<div class="list-card" onclick="initiateRead('${book.id}')"><img src="${book.cover}" class="list-cover" onerror="this.src='https://via.placeholder.com/55x75?text=PDF'"><div class="list-info"><div class="list-title">${book.title}</div><div class="list-subtitle">${book.author}</div></div><button class="list-action">❯</button></div>`; });
     }
 
     // =========================================
-    // 5. AUTH & INBOX
+    // 5. AUTHENTICATION
     // =========================================
     function openAuth() { 
         if(currentUser) { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'none'; document.getElementById('logout-panel').style.display = 'block'; document.getElementById('auth-title').innerText = "PROFILE"; } 
@@ -838,7 +905,6 @@
         openModal('auth-modal'); 
     }
     function toggleAuthMode() { const login = document.getElementById('login-form'); const reg = document.getElementById('register-form'); if (login.style.display === 'none') { login.style.display = 'block'; reg.style.display = 'none'; } else { login.style.display = 'none'; reg.style.display = 'block'; } }
-    
     async function handleRegister(e) {
       e.preventDefault(); const name = document.getElementById('reg-name').value.trim(); const customId = document.getElementById('reg-id').value.trim(); const pass = document.getElementById('reg-pass').value.trim();
       if(!customId || customId.length < 1 || customId.length > 4) { alert("❌ Invalid 3-digit code!"); return; }
@@ -848,7 +914,6 @@
           alert(`✅ SUCCESS! Your Custom ID: ${customId}`); document.getElementById('register-form').reset(); toggleAuthMode(); 
       } catch (error) { alert("❌ Registration Failed: " + error.message); }
     }
-    
     async function handleLogin(e) {
       e.preventDefault(); const id = document.getElementById('login-id').value.trim(); const pass = document.getElementById('login-pass').value;
       try { 
@@ -859,21 +924,8 @@
           } else { alert("❌ Invalid ID or Password!"); } 
       } catch (error) { alert("❌ Login Failed: " + error.message); }
     }
-    
     function handleLogout() { currentUser = null; localStorage.removeItem('retro_user'); isAdmin = false; updateAuthUI(); closeModal('auth-modal'); }
     function updateAuthUI() { document.getElementById('user-display').innerText = currentUser ? currentUser.name : "Guest"; }
-
-    function renderInbox() {
-      const inboxList = document.getElementById('inbox-list'); inboxList.innerHTML = ''; let msgCount = 0;
-      allMessages.forEach(msg => {
-        if (msg.target === 'all' || (currentUser && msg.target === currentUser.id)) {
-          msgCount++; const dateStr = new Date(msg.timestamp).toLocaleString(); let imgHtml = msg.imageUrl ? `<img src="${msg.imageUrl}" class="msg-img">` : '';
-          inboxList.innerHTML += `<div class="msg-card"><div class="msg-time">${dateStr}</div><div class="msg-text">${msg.text.replace(/\n/g, '<br>')}</div>${imgHtml}</div>`;
-        }
-      });
-      if(msgCount === 0) inboxList.innerHTML = `<div style="text-align: center; color: var(--text-muted);">No new messages.</div>`; else document.getElementById('inbox-badge').style.display = 'inline-block'; 
-    }
-    function openInbox() { document.getElementById('inbox-badge').style.display = 'none'; openModal('inbox-modal'); }
 
     // =========================================
     // 6. READER & DUAL DOWNLOAD LOGIC
@@ -882,122 +934,222 @@
         if (!currentUser) { alert("❌ Guests cannot view files. Please Login."); openAuth(); return; } 
         selectedBookForDownload = allBooks.find(b => b.id === bookId); 
         if(selectedBookForDownload) { 
-            document.getElementById('download-title').innerText = selectedBookForDownload.title; 
-            document.getElementById('download-code-input').value = ''; 
-            openModal('download-modal'); 
+            document.getElementById('download-title').innerText = selectedBookForDownload.title; document.getElementById('download-code-input').value = ''; openModal('download-modal'); 
         } 
     }
-
     function verifyDownloadCode() { 
         const input = document.getElementById('download-code-input').value.trim(); 
         if(input === selectedBookForDownload.secretCode || input === 'RETRO2026') { 
-            let fileUrl = selectedBookForDownload.fileLink; 
-            let viewerUrl = ''; 
-            
-            if (fileUrl.includes('drive.google.com')) { 
-                const match = fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)/); 
-                if (match) viewerUrl = `https://drive.google.com/file/d/${match[1]}/preview`; 
-                else viewerUrl = fileUrl; 
-            } else { 
-                viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`; 
-            } 
-            
-            document.getElementById('pdf-iframe').src = viewerUrl; 
-            document.getElementById('reader-title').innerText = selectedBookForDownload.title; 
-            
-            closeModal('download-modal'); 
-            document.getElementById('view-reader').style.display = 'flex'; 
+            let fileUrl = selectedBookForDownload.fileLink; let viewerUrl = ''; 
+            if (fileUrl.includes('drive.google.com')) { const match = fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)/); if (match) viewerUrl = `https://drive.google.com/file/d/${match[1]}/preview`; else viewerUrl = fileUrl; } else { viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`; } 
+            document.getElementById('pdf-iframe').src = viewerUrl; document.getElementById('reader-title').innerText = selectedBookForDownload.title; 
+            closeModal('download-modal'); document.getElementById('view-reader').style.display = 'flex'; 
         } else { alert("❌ Incorrect Unlock Code."); } 
     }
-
     function closeReader() { document.getElementById('view-reader').style.display = 'none'; document.getElementById('pdf-iframe').src = ""; }
-    
-    function openDownloadChoices() {
-        openModal('dl-choice-modal');
-    }
-
+    function openDownloadChoices() { openModal('dl-choice-modal'); }
     function downloadViaChrome() {
-        if(!selectedBookForDownload) return;
-        let url = selectedBookForDownload.fileLink;
-        
-        if (url.includes('drive.google.com')) {
-            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if (match) {
-                url = `https://drive.google.com/uc?export=download&id=${match[1]}`;
-            }
-        }
-        
-        window.open(url, '_blank');
-        closeModal('dl-choice-modal');
+        if(!selectedBookForDownload) return; let url = selectedBookForDownload.fileLink;
+        if (url.includes('drive.google.com')) { const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/); if (match) url = `https://drive.google.com/uc?export=download&id=${match[1]}`; }
+        window.open(url, '_blank'); closeModal('dl-choice-modal');
     }
-
-    function downloadViaDrive() {
-        if(!selectedBookForDownload) return;
-        window.open(selectedBookForDownload.fileLink, '_blank');
-        closeModal('dl-choice-modal');
-    }
+    function downloadViaDrive() { if(!selectedBookForDownload) return; window.open(selectedBookForDownload.fileLink, '_blank'); closeModal('dl-choice-modal'); }
 
     // =========================================
-    // 7. ADMIN UPLOAD/EDIT LOGIC
+    // 7. TWO-WAY INBOX SYSTEM & EDITING
     // =========================================
-    async function uploadToImgbb(fileInputId) {
-      const file = document.getElementById(fileInputId).files[0];
-      if (!file) return null;
-      const imgData = new FormData(); imgData.append("image", file);
-      const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: "POST", body: imgData });
-      const json = await res.json(); if(json.success) return json.data.url; else throw new Error("Image Upload Failed");
+    function openInbox() { 
+        lastSeenInbox = Date.now();
+        localStorage.setItem('retro_inbox_seen', lastSeenInbox.toString());
+        document.getElementById('inbox-badge').style.display = 'none'; 
+        openModal('inbox-modal'); 
+        renderInbox(); 
+    }
+    
+    function renderInbox() {
+      const inboxList = document.getElementById('inbox-list'); inboxList.innerHTML = ''; let unreadCount = 0;
+      
+      const myMsgs = allMessages.filter(m => 
+          m.target === 'all' || 
+          (currentUser && m.target === currentUser.id) || 
+          (currentUser && m.sender === currentUser.id)
+      );
+
+      myMsgs.forEach(msg => {
+          // Determine if it is unread (Sent by someone else, and newer than our last seen time)
+          if (msg.timestamp > lastSeenInbox && msg.sender !== (currentUser ? currentUser.id : '')) {
+              unreadCount++;
+          }
+
+          const dateStr = new Date(msg.timestamp).toLocaleString(); 
+          let imgs = '';
+          if(msg.imageUrl) imgs += `<img src="${msg.imageUrl}">`;
+          if(msg.images) msg.images.forEach(url => imgs += `<img src="${url}">`);
+          let imgHtml = imgs ? `<div class="msg-img-grid">${imgs}</div>` : '';
+          
+          const isMine = (currentUser && msg.sender === currentUser.id);
+          const alignStyle = isMine ? 'border-left: 4px solid var(--text-muted); background: var(--bg-dark);' : 'border-left: 4px solid var(--box-blue);';
+          const titleColor = isMine ? 'var(--text-muted)' : 'var(--neon-cyan)';
+          const title = isMine ? 'You Sent:' : (msg.sender === 'admin' ? 'Admin:' : 'System:');
+          
+          let editBtn = isMine ? `<button class="cmd-edit-btn" style="float:right;" onclick="openEditInboxMsg('${msg.id}')">EDIT</button>` : '';
+
+          inboxList.innerHTML += `
+          <div class="msg-card" style="${alignStyle}">
+              <div style="font-weight:bold; color:${titleColor}; font-size:0.8rem; margin-bottom:4px;">${title} ${editBtn}</div>
+              <div class="msg-time">${dateStr}</div>
+              <div class="msg-text">${msg.text.replace(/\n/g, '<br>')}</div>
+              ${imgHtml}
+          </div>`;
+      });
+      
+      if(unreadCount === 0) document.getElementById('inbox-badge').style.display = 'none'; 
+      else document.getElementById('inbox-badge').style.display = 'inline-block'; 
+      
+      if(myMsgs.length === 0) inboxList.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top:20px;">No messages.</div>`;
     }
 
-    async function handleBookUpload(e) {
-      e.preventDefault(); const submitBtn = e.target.querySelector('button[type="submit"]'); submitBtn.innerText = "UPLOADING..."; submitBtn.disabled = true;
+    async function handleUserInboxReply(e) {
+      e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); btn.innerText = "SENDING..."; btn.disabled = true;
       try {
-        const coverUrlInput = document.getElementById('up-cover-url').value.trim();
-        let finalCoverUrl = await uploadToImgbb('up-cover-file'); 
-        if (!finalCoverUrl && coverUrlInput) finalCoverUrl = coverUrlInput; 
-        if (!finalCoverUrl) throw new Error("Please provide a cover image URL or upload a file!");
+        if(!currentUser) throw new Error("Must be logged in.");
+        const text = document.getElementById('inbox-reply-text').value.trim();
+        let imgUrls = await uploadMultipleToImgbb('inbox-reply-img');
+        
+        await db.collection('messages').add({ sender: currentUser.id, target: 'admin', text: text, images: imgUrls, timestamp: Date.now() });
+        alert("✅ Message Sent to Admin!"); closeModal('inbox-reply-modal'); e.target.reset();
+      } catch(e) { alert("Error: " + e.message); } finally { btn.innerText = "SEND MESSAGE"; btn.disabled = false; }
+    }
 
-        const fileLink = document.getElementById('up-file-url').value.trim();
-        if (!fileLink) throw new Error("Please provide a Google Drive / Web URL for the PDF!");
+    // Admin List
+    function renderAdminInbox() {
+        const list = document.getElementById('admin-inbox-list'); list.innerHTML = '';
+        const userMsgs = allMessages.filter(m => m.target === 'admin');
+        if(userMsgs.length === 0) { list.innerHTML = `<div style="color:var(--text-muted);">No messages from users.</div>`; return; }
 
-        await db.collection('books').add({
-          title: document.getElementById('up-title').value.trim(), author: document.getElementById('up-author').value.trim(),
-          category: document.getElementById('up-category').value, subject: document.getElementById('up-subject').value,
-          cover: finalCoverUrl, fileLink: fileLink, tags: document.getElementById('up-tags').value.trim(), secretCode: document.getElementById('up-secret').value.trim(), timestamp: Date.now()
+        userMsgs.forEach(msg => {
+            const dateStr = new Date(msg.timestamp).toLocaleString(); let imgs = '';
+            if(msg.imageUrl) imgs += `<img src="${msg.imageUrl}">`; if(msg.images) msg.images.forEach(url => imgs += `<img src="${url}">`);
+            let imgHtml = imgs ? `<div class="msg-img-grid">${imgs}</div>` : '';
+            
+            list.innerHTML += `
+            <div class="msg-card" style="border-left: 4px solid var(--box-green); background: var(--bg-dark);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <div style="font-weight:bold; color:var(--box-green); font-size:0.8rem;">From ID: ${msg.sender}</div>
+                    <button class="cmd-edit-btn" onclick="targetMsg('${msg.sender}')">REPLY</button>
+                </div>
+                <div class="msg-time">${dateStr}</div><div class="msg-text">${msg.text.replace(/\n/g, '<br>')}</div>${imgHtml}
+            </div>`;
         });
-        alert("✅ Uploaded to PDF Bank!"); e.target.reset(); closeModal('upload-modal');
-      } catch (error) { alert("❌ Upload Failed: " + error.message); } finally { submitBtn.innerText = "POST TO BANK"; submitBtn.disabled = false; }
     }
 
-    async function saveEditedBook(e) {
-      e.preventDefault(); const submitBtn = e.target.querySelector('button[type="submit"]'); submitBtn.innerText = "UPDATING..."; submitBtn.disabled = true;
-      const bId = document.getElementById('edit-book-id').value; const originalCover = document.getElementById('edit-original-cover').value;
-      try {
-          const coverUrlInput = document.getElementById('edit-cover-url').value.trim();
-          let finalCoverUrl = await uploadToImgbb('edit-cover-file');
-          if (!finalCoverUrl) finalCoverUrl = coverUrlInput ? coverUrlInput : originalCover; 
+    // Inbox Message Editing
+    function openEditInboxMsg(msgId) {
+        const msg = allMessages.find(m => m.id === msgId);
+        document.getElementById('edit-inbox-id').value = msg.id;
+        document.getElementById('edit-inbox-text').value = msg.text;
+        openModal('edit-inbox-modal');
+    }
 
-          await db.collection('books').doc(bId).update({
-              title: document.getElementById('edit-title').value.trim(), author: document.getElementById('edit-author').value.trim(),
-              category: document.getElementById('edit-category').value, subject: document.getElementById('edit-subject').value,
-              cover: finalCoverUrl, fileLink: document.getElementById('edit-file-url').value.trim(),
-              tags: document.getElementById('edit-tags').value.trim(), secretCode: document.getElementById('edit-secret').value.trim()
-          });
-          alert("✅ Book updated!"); closeModal('edit-book-modal');
-      } catch(error) { alert("❌ Edit Failed: " + error.message); } finally { submitBtn.innerText = "UPDATE BOOK"; submitBtn.disabled = false; }
+    async function saveEditInboxMsg(e) {
+        e.preventDefault();
+        const msgId = document.getElementById('edit-inbox-id').value;
+        const newText = document.getElementById('edit-inbox-text').value.trim();
+        await db.collection('messages').doc(msgId).update({ text: newText });
+        closeModal('edit-inbox-modal');
     }
 
     // =========================================
-    // 8. GOD MODE COMMAND CENTER (ADMIN)
+    // 8. WANTED BOARD & EDITING THREADS
+    // =========================================
+    async function handleRequestSubmit(e) { 
+        e.preventDefault(); 
+        if(!currentUser) { alert("❌ Login required."); openAuth(); return; } 
+        const submitBtn = e.target.querySelector('button[type="submit"]'); submitBtn.innerText = "POSTING..."; submitBtn.disabled = true;
+
+        try {
+            let imgUrls = await uploadMultipleToImgbb('req-img-file');
+            await db.collection('requests').add({ 
+                title: document.getElementById('req-title-input').value.trim(), 
+                userId: currentUser.id, images: imgUrls, replies: [], timestamp: Date.now() 
+            });
+            alert("✅ Request Posted!"); e.target.reset(); 
+        } catch(err) { alert("❌ Request Failed: " + err.message); } finally { submitBtn.innerText = "POST REQUEST"; submitBtn.disabled = false; }
+    }
+
+    // Reply Logic
+    function openReplyModal(reqId) {
+        document.getElementById('reply-req-id').value = reqId; openModal('reply-modal');
+    }
+
+    async function handleThreadReply(e) {
+        e.preventDefault(); const submitBtn = e.target.querySelector('button[type="submit"]'); submitBtn.innerText = "SENDING..."; submitBtn.disabled = true;
+        try {
+            const reqId = document.getElementById('reply-req-id').value; const text = document.getElementById('reply-text').value.trim();
+            const link = document.getElementById('reply-link').value.trim(); let imgUrls = await uploadMultipleToImgbb('reply-img-file');
+
+            const replyObj = {
+                replyId: Date.now().toString() + Math.random().toString(36).substr(2, 5), // Generate unique ID for edits
+                sender: currentUser.id, isAdmin: isAdmin, text: text, link: link, images: imgUrls, timestamp: Date.now()
+            };
+            await db.collection('requests').doc(reqId).update({ replies: firebase.firestore.FieldValue.arrayUnion(replyObj) });
+            alert("✅ Reply Sent!"); closeModal('reply-modal'); e.target.reset();
+        } catch(err) { alert("❌ Reply Failed: " + err.message); } finally { submitBtn.innerText = "POST REPLY"; submitBtn.disabled = false; }
+    }
+
+    function deleteRequest(reqId) { if(confirm("Are you sure you want to delete this user's entire request thread?")) { db.collection('requests').doc(reqId).delete(); } }
+
+    // Edit Root Request
+    function openEditRequest(reqId) {
+        const req = allRequestsData.find(r => r.id === reqId);
+        document.getElementById('edit-req-id').value = req.id;
+        document.getElementById('edit-req-text').value = req.title;
+        openModal('edit-req-modal');
+    }
+    
+    async function saveEditRequest(e) {
+        e.preventDefault();
+        const reqId = document.getElementById('edit-req-id').value;
+        const newText = document.getElementById('edit-req-text').value.trim();
+        await db.collection('requests').doc(reqId).update({ title: newText });
+        closeModal('edit-req-modal');
+    }
+
+    // Edit Thread Reply
+    function openEditThreadReply(reqId, replyId) {
+        const req = allRequestsData.find(r => r.id === reqId);
+        const reply = req.replies.find(r => r.replyId === replyId);
+        document.getElementById('edit-reply-req-id').value = reqId;
+        document.getElementById('edit-reply-id').value = replyId;
+        document.getElementById('edit-reply-text').value = reply.text;
+        openModal('edit-reply-modal');
+    }
+
+    async function saveEditThreadReply(e) {
+        e.preventDefault();
+        const reqId = document.getElementById('edit-reply-req-id').value;
+        const replyId = document.getElementById('edit-reply-id').value;
+        const newText = document.getElementById('edit-reply-text').value.trim();
+        
+        const req = allRequestsData.find(r => r.id === reqId);
+        const updatedReplies = req.replies.map(r => {
+            if(r.replyId === replyId) { return { ...r, text: newText }; }
+            return r;
+        });
+
+        await db.collection('requests').doc(reqId).update({ replies: updatedReplies });
+        closeModal('edit-reply-modal');
+    }
+
+    // =========================================
+    // 9. GOD MODE COMMAND CENTER (ADMIN)
     // =========================================
     function verifyPortalCode() { 
-        const code = document.getElementById('portal-code').value.trim(); 
-        closeModal('portal-modal'); 
+        const code = document.getElementById('portal-code').value.trim(); closeModal('portal-modal'); 
         if (code === 'RETROAYUSH') { openModal('upload-modal'); } 
         else if (code === 'RETRO2026') { 
-            isAdmin = true; 
-            setupAdminLiveListener(); 
-            renderAdminBooksList();
-            renderAdminFolderLists();
+            isAdmin = true; setupAdminLiveListener(); renderAdminBooksList(); renderAdminFolderLists();
+            loadData(); // Re-trigger renders to show admin-only buttons/inbox
             openModal('admin-modal'); 
         } else { alert("❌ Invalid Terminal Code."); } 
     }
@@ -1007,21 +1159,13 @@
         catList.innerHTML = ''; appFolders.categories.forEach(cat => { catList.innerHTML += `<div class="admin-list-item"><span>${cat}</span><button class="admin-del-btn" onclick="deleteFolderOption('categories', '${cat}')">DELETE</button></div>`; });
         subList.innerHTML = ''; appFolders.subjects.forEach(sub => { subList.innerHTML += `<div class="admin-list-item"><span>${sub}</span><button class="admin-del-btn" onclick="deleteFolderOption('subjects', '${sub}')">DELETE</button></div>`; });
     }
-    function addFolderOption(type, inputId) {
-        const inputObj = document.getElementById(inputId); const val = inputObj.value.trim(); if(!val) return;
-        let newArray = [...appFolders[type]]; if(!newArray.includes(val)) newArray.push(val);
-        db.collection('system').doc('folders').update({ [type]: newArray }).then(() => { inputObj.value = ''; });
-    }
-    function deleteFolderOption(type, val) {
-        if(!confirm(`Delete ${val} from ${type}?`)) return;
-        let newArray = appFolders[type].filter(item => item !== val);
-        db.collection('system').doc('folders').update({ [type]: newArray });
-    }
+    function addFolderOption(type, inputId) { const inputObj = document.getElementById(inputId); const val = inputObj.value.trim(); if(!val) return; let newArray = [...appFolders[type]]; if(!newArray.includes(val)) newArray.push(val); db.collection('system').doc('folders').update({ [type]: newArray }).then(() => { inputObj.value = ''; }); }
+    function deleteFolderOption(type, val) { if(!confirm(`Delete ${val} from ${type}?`)) return; let newArray = appFolders[type].filter(item => item !== val); db.collection('system').doc('folders').update({ [type]: newArray }); }
 
     async function pushGlobalBroadcast() {
       const btn = document.getElementById('b-btn'); btn.innerText = "WAIT..."; btn.disabled = true;
       try {
-        const text = document.getElementById('b-text').value.trim(); const imgUrl = await uploadToImgbb('b-img');
+        const text = document.getElementById('b-text').value.trim(); const imgUrl = await uploadSingleToImgbb('b-img');
         if(text === '' && !imgUrl) { db.collection('system').doc('announcement').set({ active: false }); } 
         else { await db.collection('system').doc('announcement').set({ text: text, imageUrl: imgUrl || null, active: true }); }
         alert("📡 Live Broadcast Updated!");
@@ -1033,8 +1177,8 @@
       try {
         const target = document.getElementById('inbox-target').value.trim() || 'all'; const text = document.getElementById('inbox-msg').value.trim();
         if(!text) throw new Error("Message cannot be empty");
-        const imgUrl = await uploadToImgbb('inbox-img');
-        await db.collection('messages').add({ target: target, text: text, imageUrl: imgUrl || null, timestamp: Date.now() });
+        let imgUrls = await uploadMultipleToImgbb('inbox-img');
+        await db.collection('messages').add({ sender: 'admin', target: target, text: text, images: imgUrls, timestamp: Date.now() });
         alert(`✉️ Sent to ${target === 'all' ? 'Everyone' : 'ID: '+target}`);
         document.getElementById('inbox-msg').value = ''; document.getElementById('inbox-img').value = '';
       } catch(e) { alert("Error: " + e.message); } finally { btn.innerText = "SEND"; btn.disabled = false; }
@@ -1052,29 +1196,17 @@
 
     function setupAdminLiveListener() {
         if (adminUsersUnsubscribe) adminUsersUnsubscribe(); 
-        
         adminUsersUnsubscribe = db.collection('users').onSnapshot(snapshot => {
-            const userList = document.getElementById('admin-user-list'); 
-            userList.innerHTML = '';
+            const userList = document.getElementById('admin-user-list'); userList.innerHTML = '';
             const currentTime = Date.now();
-
             snapshot.forEach(doc => {
-              const uId = doc.id; 
-              const uData = doc.data();
-              const seen = timeAgo(uData.lastActive);
-              
+              const uId = doc.id; const uData = doc.data(); const seen = timeAgo(uData.lastActive);
               const isOnline = (currentTime - (uData.lastActive||0)) < 45000;
-              const statusHtml = isOnline ? 
-                  `<div class="usr-status online"><span class="status-dot"></span> Online</div>` : 
-                  `<div class="usr-status"><span class="status-dot"></span> Offline</div>`;
-              
+              const statusHtml = isOnline ? `<div class="usr-status online"><span class="status-dot"></span> Online</div>` : `<div class="usr-status"><span class="status-dot"></span> Offline</div>`;
               userList.innerHTML += `
                 <div class="usr-card">
-                  <div class="usr-seen">Seen: ${seen}</div>
-                  <div class="usr-name">${uData.name}</div>
-                  ${statusHtml}
+                  <div class="usr-seen">Seen: ${seen}</div><div class="usr-name">${uData.name}</div>${statusHtml}
                   <div class="usr-info">ID: <span>${uId}</span> | Pass: <span>${uData.password}</span></div>
-                  
                   <div class="usr-btn-grid">
                     <button class="u-btn cyan smooth-transition" onclick="targetMsg('${uId}')">MSG</button>
                     <button class="u-btn red smooth-transition" onclick="if(confirm('NUKE USER ${uId}?')) { db.collection('users').doc('${uId}').delete(); }">NUKE</button>
@@ -1085,8 +1217,7 @@
     }
 
     function renderAdminBooksList() {
-      const adminBooksContainer = document.getElementById('admin-books-list'); 
-      adminBooksContainer.innerHTML = '';
+      const adminBooksContainer = document.getElementById('admin-books-list'); adminBooksContainer.innerHTML = '';
       allBooks.forEach(book => {
         adminBooksContainer.innerHTML += `
           <div class="admin-card-box" style="border-color: var(--neon-purple);">
@@ -1098,29 +1229,6 @@
             </div>
           </div>`;
       });
-    }
-
-    function openEditBook(bookId) {
-      const book = allBooks.find(b => b.id === bookId);
-      if(book) {
-        document.getElementById('edit-book-id').value = book.id; 
-        document.getElementById('edit-original-cover').value = book.cover; 
-        document.getElementById('edit-title').value = book.title; 
-        document.getElementById('edit-author').value = book.author; 
-        document.getElementById('edit-category').value = book.category; 
-        document.getElementById('edit-subject').value = book.subject; 
-        document.getElementById('edit-cover-url').value = ''; 
-        document.getElementById('edit-file-url').value = book.fileLink; 
-        document.getElementById('edit-tags').value = book.tags; 
-        document.getElementById('edit-secret').value = book.secretCode;
-        closeModal('admin-modal'); openModal('edit-book-modal');
-      }
-    }
-    
-    function handleRequestSubmit(e) { 
-        e.preventDefault(); 
-        if(!currentUser) { alert("❌ Login required."); openAuth(); return; } 
-        db.collection('requests').add({ title: document.getElementById('req-title-input').value.trim(), userId: currentUser.id, timestamp: Date.now() }).then(() => { alert("✅ Request Posted!"); document.getElementById('req-title-input').value = ''; }); 
     }
   </script>
 </body>
